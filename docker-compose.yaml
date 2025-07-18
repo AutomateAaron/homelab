@@ -21,11 +21,13 @@ include:
     # - apps/heimdall.yaml # Heimdall (Landing Page)
     # - apps/plex.yaml # Plex (Media Server)
 
+    - apps/jellyfin.yaml
     - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
     - apps/sonarr.yaml # Sonarr (TV Show Downloads)
     - apps/radarr.yaml # Radarr (Movie Downloads)
     - apps/prowlarr.yaml # Prowlarr (Indexer)
-    - apps/overseerr.yaml # Overseerr (Media Requests)
+    - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
+    - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
 
     # - apps/sabnzbd.yaml # SABnzbd (Usenet Downloading)
     # - apps/nzbhydra.yaml # NZBHydra2 (Usenet Browsing)

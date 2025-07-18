@@ -1,0 +1,24 @@
+services:
+  bazarr:
+    container_name: bazarr
+    image: lscr.io/linuxserver/bazarr:latest
+    # profiles: ["media", "arrs", "all"]
+    volumes:
+      - ${CONFIGS_DIR}/bazarr:/config
+      - ${MOVIES_DIR}:/movies #optional
+      - ${TV_DIR}:/tv #optional
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    security_opt:
+      - no-new-privileges:true
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    networks:
+      traefik:
+    labels:
+      traefik.enable: true
+      traefik.http.routers.bazarr-rtr.rule: Host(`${BAZARR_SUBDOMAIN:-bazarr}.${DOMAIN_NAME}`)
+      traefik.http.routers.bazarr-rtr.entrypoints: websecure
+      traefik.http.routers.bazarr-rtr.service: bazarr-svc
+      traefik.http.services.bazarr-svc.loadbalancer.server.port: 6767

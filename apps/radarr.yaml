@@ -6,7 +6,7 @@ services:
     volumes:
       - ${CONFIGS_DIR}/radarr:/config
       - ${DOWNLOADS_DIR}:/downloads
-      - ${MOVIE_DIR}:/movies
+      - ${MOVIES_DIR}:/movies
     environment:
       PUID: ${PUID}
       PGID: ${PGID}

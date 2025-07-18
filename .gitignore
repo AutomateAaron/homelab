@@ -8,6 +8,7 @@ data/*/*
 !data/logs/.gitkeep
 !data/movies/.gitkeep
 !data/secrets/.gitkeep
+!data/cache/.gitkeep
 !data/tv/.gitkeep
 
 
