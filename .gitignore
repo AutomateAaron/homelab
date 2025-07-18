@@ -1,4 +1,14 @@
 # Secrets
 .env*
-secrets/
-appdata/
+
+data/*/*
+!data/books/.gitkeep
+!data/configs/.gitkeep
+!data/downloads/.gitkeep
+!data/logs/.gitkeep
+!data/movies/.gitkeep
+!data/secrets/.gitkeep
+!data/tv/.gitkeep
+
+
+

@@ -1,29 +1,24 @@
-#######################################
-# SONARR (TV SHOW DOWNLOADS)
-#######################################
-
 services:
-    sonarr:
-        container_name: sonarr
-        image: lscr.io/linuxserver/sonarr:latest
-        profiles: ["media", "arrs", "all"]
-        volumes:
-            - ${DOCKER_DIRECTORY}/appdata/sonarr:/config
-            - ${COMPLETED_DOWNLOADS}:/downloads
-            - ${TV_DIR}:/tv
-        environment:
-            PUID: ${PUID}
-            PGID: ${PGID}
-            TZ: ${TZ}
-        security_opt:
-            - no-new-privileges:true
-        restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-        networks:
-            traefik:
-        labels:
-            traefik.enable: true
-            traefik.http.routers.sonarr-rtr.rule: Host(`${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME}`)
-            traefik.http.routers.sonarr-rtr.entrypoints: websecure
-            traefik.http.routers.sonarr-rtr.service: sonarr-svc
-            traefik.http.services.sonarr-svc.loadbalancer.server.port: 8989
-            traefik.http.routers.sonarr-rtr.middlewares: chain-oauth-google@file
+  sonarr:
+    container_name: sonarr
+    image: lscr.io/linuxserver/sonarr:latest
+    # profiles: ["media", "arrs", "all"]
+    volumes:
+      - ${CONFIGS_DIR}/sonarr:/config
+      - ${DOWNLOADS_DIR}:/downloads
+      - ${TV_DIR}:/tv
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    security_opt:
+      - no-new-privileges:true
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    networks:
+      traefik:
+    labels:
+      traefik.enable: true
+      traefik.http.routers.sonarr-rtr.rule: Host(`${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME}`)
+      traefik.http.routers.sonarr-rtr.entrypoints: websecure
+      traefik.http.routers.sonarr-rtr.service: sonarr-svc
+      traefik.http.services.sonarr-svc.loadbalancer.server.port: 8989

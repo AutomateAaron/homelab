@@ -26,4 +26,3 @@ services:
             traefik.http.routers.tautulli-rtr.entrypoints: websecure
             traefik.http.routers.tautulli-rtr.service: tautulli-svc
             traefik.http.services.tautulli-svc.loadbalancer.server.port: 8181
-            traefik.http.routers.tautulli-rtr.middlewares: chain-oauth-google@file

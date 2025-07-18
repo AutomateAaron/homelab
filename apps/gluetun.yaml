@@ -1,0 +1,36 @@
+services:
+  gluetun:
+    container_name: gluetun
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8080:8080 # for qbittorrent
+      - 51820:51820
+      - 51820:51820/udp
+      - 46931:46931
+      - 46931:46931/udp
+    environment:
+      - TZ=${TZ}
+
+      # VPN Configuration
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+
+      - WIREGUARD_PRIVATE_KEY=${WIREGUARD_PRIVATE_KEY}
+      - SERVER_COUNTRIES=${SERVER_COUNTRIES}
+      - SERVER_REGIONS=${SERVER_REGIONS}
+      - SERVER_CITIES=${SERVER_CITIES}
+      - SERVER_HOSTNAMES=${SERVER_HOSTNAMES}
+
+      # Port Forwarding
+      - PORT_FORWARD_ONLY=on
+      - VPN_PORT_FORWARDING=on
+      - VPN_PORT_FORWARDING_STATUS_FILE=/tmp/gluetun/forwarded_port
+      - UPDATER_PERIOD=24h
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    networks:
+      traefik:
+    # volumes:
+    # - ${COMMON_PATH}:${COMMON_PATH}
+    # - ${COMMON_PATH}/gluetun:/tmp/gluetun

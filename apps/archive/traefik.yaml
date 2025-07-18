@@ -39,8 +39,8 @@ services:
         restart: always
         depends_on:
             - socket-proxy
-            - duckdns
-            - oauth
+            # - duckdns
+            # - oauth
         command:
             # GLOBAL SETTINGS
             - --global.checkNewVersion=true
@@ -90,4 +90,5 @@ services:
             traefik.http.routers.traefik-rtr.rule: Host(`${TRAEFIK_SUBDOMAIN:-traefik}.${DOMAIN_NAME}`)
             traefik.http.routers.traefik-rtr.entrypoints: websecure
             traefik.http.routers.traefik-rtr.service: api@internal
-            traefik.http.routers.traefik-rtr.middlewares: chain-oauth-google@file
+            # traefik.http.routers.traefik-rtr.middlewares: chain-oauth-google@file
+
