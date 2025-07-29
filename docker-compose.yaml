@@ -12,7 +12,7 @@ include:
     # - apps/oauth.yaml # OAuth (Authentication)
     - apps/socket-proxy.yaml # Docker Socket Proxy (Security)
     - apps/traefik.yaml
-    - apps/gluetun.yaml
+    # - apps/gluetun.yaml
 
     #############################################################################
     # MEDIA
@@ -22,15 +22,15 @@ include:
     # - apps/plex.yaml # Plex (Media Server)
 
     - apps/jellyfin.yaml # Jellyfin (Media Server)
-    - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
+    # - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
-    - apps/jackett.yaml
-    - apps/prowlarr.yaml # Prowlarr (Indexer)
-    - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
-    - apps/sonarr.yaml # Sonarr (TV Show Downloads)
-    - apps/radarr.yaml # Radarr (Movie Downloads)
-    - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
-    - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
+    # - apps/jackett.yaml
+    # - apps/prowlarr.yaml # Prowlarr (Indexer)
+    # - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
+    # - apps/sonarr.yaml # Sonarr (TV Show Downloads)
+    # - apps/radarr.yaml # Radarr (Movie Downloads)
+    # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
+    # - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
 
     # - apps/sabnzbd.yaml # SABnzbd (Usenet Downloading)
     # - apps/nzbhydra.yaml # NZBHydra2 (Usenet Browsing)
@@ -68,14 +68,14 @@ include:
 networks:
     traefik:
         driver: bridge
-        ipam:
-            config:
-                - subnet: 192.168.90.0/24
+        # ipam:
+        #     config:
+        #         - subnet: 192.168.90.0/24
     docker:
         driver: bridge
-        ipam:
-            config:
-                - subnet: 192.168.91.0/24
+        # ipam:
+        #     config:
+        #         - subnet: 192.168.91.0/24
 #     internal:
 #         driver: bridge
 #         ipam:

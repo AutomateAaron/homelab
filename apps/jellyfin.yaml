@@ -3,6 +3,8 @@ services:
     container_name: jellyfin
     image: ghcr.io/jellyfin/jellyfin:latest
     # profiles: ["media", "all"]
+    ports:
+    - 8096:8096
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -20,7 +22,6 @@ services:
       traefik:
     labels:
       traefik.enable: true
-      traefik.http.routers.jellyfin-rtr.rule: Host(`${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}`)
-      traefik.http.routers.jellyfin-rtr.entrypoints: websecure
-      traefik.http.routers.jellyfin-rtr.service: jellyfin-svc
-      traefik.http.services.jellyfin-svc.loadbalancer.server.port: 8096
+      traefik.http.routers.jellyfin.rule: Host(`${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}`)
+      traefik.http.routers.jellyfin.entrypoints: websecure
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
