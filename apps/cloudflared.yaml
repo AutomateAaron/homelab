@@ -1,0 +1,10 @@
+services:
+  cloudflared:
+    container_name: cloudflared
+    image: cloudflare/cloudflared
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    command: tunnel run
+    networks:
+      - traefik
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}

@@ -12,6 +12,9 @@ include:
     # - apps/oauth.yaml # OAuth (Authentication)
     - apps/socket-proxy.yaml # Docker Socket Proxy (Security)
     - apps/traefik.yaml
+    - apps/cloudflared.yaml
+    - apps/whoami.yaml
+    - apps/authelia.yaml # Authelia (Authentication)
     # - apps/gluetun.yaml
 
     #############################################################################

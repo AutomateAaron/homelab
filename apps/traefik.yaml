@@ -93,6 +93,7 @@ services:
 
       # Entrypoint - WebSecure
       - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.middlewares=authelia@docker
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN_NAME}
       - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN_NAME}
@@ -117,24 +118,5 @@ services:
       traefik.http.routers.traefik-rtr.service: api@internal
       # traefik.http.routers.traefik-rtr.middlewares: chain-oauth-google@file
 
-  whoami:
-    container_name: whoami
-    image: traefik/whoami
-    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    labels:
-      traefik.enable: true
-      traefik.http.routers.whoami.rule: Host(`${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}`)
-      traefik.http.routers.whoami.entrypoints: websecure
-      traefik.http.services.whoami.loadbalancer.server.port: 80
-    networks:
-      - traefik
 
-  cloudflared:
-    container_name: cloudflared
-    image: cloudflare/cloudflared
-    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    command: tunnel run
-    networks:
-      - traefik
-    environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+

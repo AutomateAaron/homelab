@@ -1,3 +1,101 @@
+configs:
+  authelia_config:
+    content: |
+      server:
+        address: 'tcp://0.0.0.0:9091/'
+
+      log:
+        level: debug
+
+      theme: dark
+
+      identity_validation:
+        reset_password:
+          # CHANGE THIS - Generate with: openssl rand -hex 32
+          jwt_secret: a_very_important_secret_change_this
+
+      totp:
+        issuer: ${DOMAIN_NAME}
+        period: 30
+        skew: 1
+
+      authentication_backend:
+        file:
+          path: /config/users_database.yml
+          password:
+            algorithm: argon2id
+            iterations: 1
+            salt_length: 16
+            parallelism: 8
+            memory: 64
+
+      access_control:
+        default_policy: deny
+        rules:
+          # Allow access to Authelia itself
+          - domain: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
+            policy: bypass
+
+          # Allow access to whoami for admin users only
+          - domain: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
+            policy: one_factor
+            subject:
+              - "group:admins"
+          
+          # # Require authentication for all other domains (except whoami)
+          # - domain: "*.${DOMAIN_NAME}"
+          #   policy: one_factor
+
+      session:
+        name: authelia_session
+        # CHANGE THIS - Generate with: openssl rand -hex 32
+        secret: unsecure_session_secret_change_this
+        expiration: 3600  # 1 hour
+        inactivity: 300   # 5 minutes
+        same_site: lax
+        cookies:
+          - domain: ${DOMAIN_NAME}
+            authelia_url: https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
+            default_redirection_url: https://${DOMAIN_NAME}
+
+      regulation:
+        max_retries: 3
+        find_time: 120
+        ban_time: 300
+
+      storage:
+        # CHANGE THIS - Generate with: openssl rand -hex 32
+        encryption_key: you_must_generate_a_random_key_of_more_than_twenty_chars_and_configure_this
+        local:
+          path: /config/db.sqlite3
+
+      notifier:
+        # For testing - use SMTP in production
+        filesystem:
+          filename: /config/notification.txt
+
+  authelia_users:
+    content: |
+      users:
+        # Example user - john with password "password"
+        # Generate new passwords with: docker run authelia/authelia:latest authelia hash-password
+        john:
+          displayname: "John Doe"
+          password: "$$argon2id$$v=19$$m=65536,t=3,p=4$$wOBVmzLsmDxrkgR/JO5YRA$/1UQu9jB2q5zMvWy0FbCxxm7XC1UE2O1zbofAYOAWeQ"
+          email: john.doe@automateaaron.com
+          groups:
+            - admins
+            - dev
+        
+        # Add more users as needed
+        jane:
+          displayname: "Jane Smith"
+          # Password is also "password" - CHANGE THIS!
+          password: "$$argon2id$$v=19$$m=65536,t=3,p=4$$wOBVmzLsmDxrkgR/JO5YRA$/1UQu9jB2q5zMvWy0FbCxxm7XC1UE2O1zbofAYOAWeQ"
+          email: jane.smith@examautople.com
+          groups:
+            - users
+
 services:
   authelia:
     container_name: 'authelia'
@@ -5,20 +103,28 @@ services:
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
       - traefik
-    volumes:
-      - '${CONFIGS_DIR}/authelia:/config'
+    configs:
+      - source: authelia_config
+        target: /config/configuration.yml
+      - source: authelia_users
+        target: /config/users_database.yml
+    # volumes:
+    #   - '${CONFIGS_DIR}/authelia:/config'
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+    ports:
+      - 9091:9091
     labels:
       traefik.enable: 'true'
-      traefik.http.routers.authelia.rule: 'Host(`auth.example.com`)'
-      traefik.http.routers.authelia.entryPoints: 'https'
+      traefik.http.routers.authelia.rule: Host(`${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}`)
+      traefik.http.routers.authelia.entrypoints: 'websecure'
       traefik.http.routers.authelia.tls: 'true'
+      traefik.http.services.authelia.loadbalancer.server.port: '9091'
       traefik.http.middlewares.authelia.forwardAuth.address: 'http://authelia:9091/api/authz/forward-auth'
       ## The following commented line is for configuring the Authelia URL in the proxy. We strongly suggest this is
       ## configured in the Session Cookies section of the Authelia configuration.
-      # traefik.http.middlewares.authelia.forwardAuth.address: 'http://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2Fauth.example.com%2F'
+      # traefik.http.middlewares.authelia.forwardAuth.address: 'http://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2F${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}%2F'
       traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader: 'true'
       traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders: 'Remote-User,Remote-Groups,Remote-Email,Remote-Name'
