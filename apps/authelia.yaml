@@ -56,6 +56,10 @@ configs:
           - domain: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
             policy: bypass
 
+          # Allow access to Authelia itself
+          - domain: ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}
+            policy: bypass
+
           # ADMIN USERS
           - domain: ${TRAEFIK_SUBDOMAIN:-traefik}.${DOMAIN_NAME}
             policy: one_factor
