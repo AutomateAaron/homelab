@@ -1,6 +1,6 @@
 configs:
   authelia_config:
-    content: |
+    content: | # yaml
       server:
         address: 'tcp://0.0.0.0:9091/'
 
@@ -20,14 +20,34 @@ configs:
         skew: 1
 
       authentication_backend:
-        file:
-          path: /config/users_database.yml
-          password:
-            algorithm: argon2id
-            iterations: 1
-            salt_length: 16
-            parallelism: 8
-            memory: 64
+        ldap:
+          implementation: 'lldap'
+          # Format is [<scheme>://]<hostname>[:<port>]
+          # ldap port for LLDAP is 3890 and ldaps 6360
+          address: 'ldap://lldap:3890'
+
+          # Set base dn that you configured in LLDAP
+          base_dn: '${LLDAP_LDAP_BASE_DN}'
+          # The username and password of the bind user.
+          # "bind_user" should be the username you created for authentication with the "lldap_strict_readonly" permission. It is not recommended to use an actual admin account here.
+          # If you are configuring Authelia to change user passwords, then the account used here needs the "lldap_password_manager" permission instead.
+
+          user: 'UID=${AUTHELIA_LDAP_USER_NAME},OU=people,${LLDAP_LDAP_BASE_DN}'
+          # Password can also be set using a secret: https://www.authelia.com/configuration/methods/secrets/.
+          password: ${AUTHELIA_LDAP_USER_PASS}
+          # Optional: Setup TLS if you've enabled LDAPS
+          # tls:
+          #  skip_verify: false
+          #  minimum_version: TLS1.2
+
+        # file:
+        #   path: /config/users_database.yml
+        #   password:
+        #     algorithm: argon2id
+        #     iterations: 1
+        #     salt_length: 16
+        #     parallelism: 8
+        #     memory: 64
 
       access_control:
         default_policy: deny
@@ -36,11 +56,25 @@ configs:
           - domain: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
             policy: bypass
 
-          # Allow access to whoami for admin users only
-          - domain: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
+          # ADMIN USERS
+          - domain: ${TRAEFIK_SUBDOMAIN:-traefik}.${DOMAIN_NAME}
             policy: one_factor
             subject:
-              - "group:admins"
+              - "group:admin"
+              - "group:traefik_user"
+
+          - domain: ${LLDAP_SUBDOMAIN:-lldap}.${DOMAIN_NAME}
+            policy: one_factor
+            subject:
+              - "group:admin"
+              - "group:lldap_admin"
+
+          # ALL USERS
+          - domain: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
+            policy: one_factor
+
+          # - domain: ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}
+          #   policy: one_factor
           
           # # Require authentication for all other domains (except whoami)
           # - domain: "*.${DOMAIN_NAME}"
@@ -73,29 +107,6 @@ configs:
         # For testing - use SMTP in production
         filesystem:
           filename: /config/notification.txt
-
-  authelia_users:
-    content: |
-      users:
-        # Example user - john with password "password"
-        # Generate new passwords with: docker run authelia/authelia:latest authelia hash-password
-        john:
-          displayname: "John Doe"
-          password: "$$argon2id$$v=19$$m=65536,t=3,p=4$$wOBVmzLsmDxrkgR/JO5YRA$/1UQu9jB2q5zMvWy0FbCxxm7XC1UE2O1zbofAYOAWeQ"
-          email: john.doe@automateaaron.com
-          groups:
-            - admins
-            - dev
-        
-        # Add more users as needed
-        jane:
-          displayname: "Jane Smith"
-          # Password is also "password" - CHANGE THIS!
-          password: "$$argon2id$$v=19$$m=65536,t=3,p=4$$wOBVmzLsmDxrkgR/JO5YRA$/1UQu9jB2q5zMvWy0FbCxxm7XC1UE2O1zbofAYOAWeQ"
-          email: jane.smith@examautople.com
-          groups:
-            - users
-
 services:
   authelia:
     container_name: 'authelia'
@@ -103,11 +114,11 @@ services:
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
       - traefik
+    depends_on:
+      - lldap
     configs:
       - source: authelia_config
         target: /config/configuration.yml
-      - source: authelia_users
-        target: /config/users_database.yml
     # volumes:
     #   - '${CONFIGS_DIR}/authelia:/config'
     environment:
