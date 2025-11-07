@@ -11,8 +11,8 @@ services:
       LLDAP_KEY_SEED: ${LLDAP_KEY_SEED}
       LLDAP_LDAP_BASE_DN: ${LLDAP_LDAP_BASE_DN}
       LLDAP_LDAP_USER_PASS: ${LLDAP_LDAP_USER_PASS}
-    # volumes:
-    #   - ${CONFIGS_DIR}/lldap:/data
+    volumes:
+      - ${CONFIGS_DIR}/lldap:/data
     labels:
       traefik.enable: true
       traefik.http.routers.lldap.rule: Host(`${LLDAP_SUBDOMAIN:-lldap}.${DOMAIN_NAME}`)
@@ -20,36 +20,34 @@ services:
       traefik.http.services.lldap.loadbalancer.server.port: 17170
     networks:
       - traefik
-    post_start:
-      - command: |
-          /bin/bash -c "
-            echo 'Waiting for lldap to start...'
-            echo $(pwd)
-            sleep 2
-            echo 'Running post-start tasks...'
-            curl -O https://raw.githubusercontent.com/Zepmann/lldap-cli/56b9faf400ae67269b8fbbd575d86b67d2395de5/lldap-cli
-            chmod +x lldap-cli
-            PATH=$$PATH:.
+    # post_start:
+    #   - command: |
+    #       /bin/bash -c "
+    #         echo 'Waiting for lldap to start...'
+    #         echo $(pwd)
+    #         sleep 2
+    #         echo 'Running post-start tasks...'
+    #         curl -O https://raw.githubusercontent.com/Zepmann/lldap-cli/56b9faf400ae67269b8fbbd575d86b67d2395de5/lldap-cli
+    #         chmod +x lldap-cli
+    #         PATH=$$PATH:.
 
-            # Create Groups
-            lldap-cli group add admin
-            lldap-cli group add user
+    #         # Create Groups
+    #         lldap-cli group add admin
+    #         lldap-cli group add user
 
-            lldap-cli group add traefik_user
-            lldap-cli group add whoami_user
+    #         lldap-cli group add traefik_user
+    #         lldap-cli group add whoami_user
 
-            # Authelia
-            lldap-cli user add ${AUTHELIA_LDAP_USER_NAME} ${AUTHELIA_LDAP_USER_NAME} -p ${AUTHELIA_LDAP_USER_PASS}
-            lldap-cli user group add ${AUTHELIA_LDAP_USER_NAME} lldap_strict_readonly
+    #         # Authelia
+    #         lldap-cli user add ${AUTHELIA_LDAP_USER_NAME} ${AUTHELIA_LDAP_USER_NAME} -p ${AUTHELIA_LDAP_USER_PASS}
+    #         lldap-cli user group add ${AUTHELIA_LDAP_USER_NAME} lldap_strict_readonly
 
-            # Jellyfin
-            lldap-cli user add ${JELLYFIN_LDAP_USER_NAME} ${JELLYFIN_LDAP_USER_NAME} -p ${JELLYFIN_LDAP_USER_PASS}
-            lldap-cli user group add ${JELLYFIN_LDAP_USER_NAME} lldap_strict_readonly
-
-
-          "
-        user: lldap
-        environment:
-          LLDAP_CONFIG: /data/lldap_config.toml
-          LLDAP_USERNAME: admin
-          LLDAP_PASSWORD: ${LLDAP_LDAP_USER_PASS}
+    #         # Jellyfin
+    #         lldap-cli user add ${JELLYFIN_LDAP_USER_NAME} ${JELLYFIN_LDAP_USER_NAME} -p ${JELLYFIN_LDAP_USER_PASS}
+    #         lldap-cli user group add ${JELLYFIN_LDAP_USER_NAME} lldap_strict_readonly
+    #       "
+    #     user: lldap
+    #     environment:
+    #       LLDAP_CONFIG: /data/lldap_config.toml
+    #       LLDAP_USERNAME: admin
+    #       LLDAP_PASSWORD: ${LLDAP_LDAP_USER_PASS}

@@ -94,7 +94,7 @@ configs:
         cookies:
           - domain: ${DOMAIN_NAME}
             authelia_url: https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
-            default_redirection_url: https://${DOMAIN_NAME}
+            # default_redirection_url: https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
 
       regulation:
         max_retries: 3
