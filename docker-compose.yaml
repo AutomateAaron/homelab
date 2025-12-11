@@ -10,12 +10,15 @@ include:
     # - apps/traefik/docker-compose.yaml # Traefik (Reverse Proxy)
     # - apps/duckdns.yaml # DuckDNS (Dynamic DNS)
     # - apps/oauth.yaml # OAuth (Authentication)
+    
     - apps/socket-proxy.yaml # Docker Socket Proxy (Security)
-    - apps/traefik.yaml
+    - apps/caddy.yaml # Caddy (Reverse Proxy)
+    - apps/whoami.yaml # WhoAmI (Test WebServer)
     - apps/cloudflared.yaml
-    - apps/whoami.yaml
-    - apps/authelia.yaml # Authelia (Authentication)
-    - apps/lldap.yaml # LLDap (Identity Management)
+    # - apps/traefik.yaml
+    # - apps/whoami.yaml
+    # - apps/authelia.yaml # Authelia (Authentication)
+    # - apps/lldap.yaml # LLDap (Identity Management)
     # - apps/gluetun.yaml
 
     #############################################################################
@@ -25,7 +28,7 @@ include:
     # - apps/heimdall.yaml # Heimdall (Landing Page)
     # - apps/plex.yaml # Plex (Media Server)
 
-    - apps/jellyfin.yaml # Jellyfin (Media Server)
+    # - apps/jellyfin.yaml # Jellyfin (Media Server)
     # - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
     # - apps/jackett.yaml
@@ -70,16 +73,12 @@ include:
 ################################################################################
 
 networks:
+    caddy:
+        driver: bridge
     traefik:
         driver: bridge
-        # ipam:
-        #     config:
-        #         - subnet: 192.168.90.0/24
     docker:
         driver: bridge
-        # ipam:
-        #     config:
-        #         - subnet: 192.168.91.0/24
 #     internal:
 #         driver: bridge
 #         ipam:

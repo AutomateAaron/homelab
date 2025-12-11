@@ -1,0 +1,35 @@
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:latest
+    container_name: caddy
+    ports:
+      - published: 80
+        target: 80
+        protocol: tcp
+        mode: host
+      - published: 443
+        target: 443
+        protocol: tcp
+        mode: host
+      - published: 443
+        target: 443
+        protocol: udp
+        mode: host # HTTP/3
+      - published: 2019
+        target: 2019
+        protocol: tcp
+        mode: host # Caddy admin API
+    environment:
+      CADDY_INGRESS_NETWORKS: caddy
+      DOCKER_HOST: tcp://socket-proxy:2375
+    volumes:
+      - ${CONFIGS_DIR}/caddy/data:/data
+      - ${CONFIGS_DIR}/caddy/config:/config
+    networks:
+      caddy:
+      docker:
+    security_opt:
+      - no-new-privileges:true
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    depends_on:
+      - socket-proxy

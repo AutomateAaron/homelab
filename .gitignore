@@ -11,5 +11,7 @@ data/*/*
 !data/cache/.gitkeep
 !data/tv/.gitkeep
 
+# Agents
+.claude/
 
 

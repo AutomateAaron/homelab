@@ -5,6 +5,6 @@ services:
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     command: tunnel run
     networks:
-      - traefik
+      - caddy
     environment:
       - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
