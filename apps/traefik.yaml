@@ -104,7 +104,7 @@ services:
       # # - --entrypoints.websecure.http.tls.domains[1].main=${SECONDARY_DOMAIN_NAME}
       # # - --entrypoints.websecure.http.tls.domains[1].sans=*.${SECONDARY_DOMAIN_NAME}
       # - --entrypoints.websecure.http.tls.options=tls-opts@file
-      
+
       # Certificate Resolver
       - --certificatesResolvers.letsencrypt.acme.caServer=${LETS_ENCRYPT_ENV:-https://acme-v02.api.letsencrypt.org/directory}
       - --certificatesResolvers.letsencrypt.acme.storage=/config/acme.json

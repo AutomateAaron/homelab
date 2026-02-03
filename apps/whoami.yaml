@@ -6,5 +6,6 @@ services:
     labels:
       caddy: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
       caddy.reverse_proxy: "{{upstreams 80}}"
+      caddy.tls.dns: "cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}"
     networks:
       - caddy

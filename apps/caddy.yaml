@@ -1,6 +1,20 @@
 services:
   caddy:
-    image: lucaslorentz/caddy-docker-proxy:latest
+    build:
+      dockerfile_inline: |
+        FROM caddy:2-builder AS builder
+
+        RUN xcaddy build \
+            --with github.com/lucaslorentz/caddy-docker-proxy/v2 \
+            --with github.com/caddy-dns/cloudflare \
+            --with github.com/fabriziosalmi/caddy-waf
+
+        FROM caddy:2
+
+        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+        CMD ["caddy", "docker-proxy"]
+
     container_name: caddy
     ports:
       - published: 80
@@ -20,16 +34,20 @@ services:
         protocol: tcp
         mode: host # Caddy admin API
     environment:
-      CADDY_INGRESS_NETWORKS: caddy
       DOCKER_HOST: tcp://socket-proxy:2375
+
     volumes:
       - ${CONFIGS_DIR}/caddy/data:/data
       - ${CONFIGS_DIR}/caddy/config:/config
     networks:
-      caddy:
-      docker:
+      - caddy
+      - docker
     security_opt:
       - no-new-privileges:true
+
+    
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+
     depends_on:
       - socket-proxy
+
