@@ -1,14 +1,14 @@
 configs:
   caddyfile:
     content: | # yaml
-      authelia.${DOMAIN_NAME} {
+      ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME} {
               reverse_proxy authelia:9091
               tls {
                       dns cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}
               }
       }
 
-      whoami.${DOMAIN_NAME} {
+      ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME} {
               forward_auth http://authelia:9091 {
                       copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
                       uri /api/authz/forward-auth
