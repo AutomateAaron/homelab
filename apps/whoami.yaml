@@ -3,12 +3,5 @@ services:
     container_name: whoami
     image: traefik/whoami
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    labels:
-      caddy: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
-      caddy.forward_auth: "http://authelia:9091"
-      caddy.forward_auth.uri: "/api/authz/forward-auth"
-      caddy.forward_auth.copy_headers: "Remote-User Remote-Groups Remote-Name Remote-Email"
-      caddy.reverse_proxy: "{{upstreams 80}}"
-      caddy.tls.dns: "cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}"
     networks:
-      - caddy
+      - proxy

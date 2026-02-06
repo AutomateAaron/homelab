@@ -72,7 +72,7 @@ services:
     image: 'authelia/authelia'
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
-      - caddy
+      - proxy
     configs:
       - source: authelia_config
         target: /config/configuration.yml

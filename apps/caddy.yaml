@@ -1,3 +1,24 @@
+configs:
+  caddyfile:
+    content: | # yaml
+      authelia.${DOMAIN_NAME} {
+              reverse_proxy authelia:9091
+              tls {
+                      dns cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}
+              }
+      }
+
+      whoami.${DOMAIN_NAME} {
+              forward_auth http://authelia:9091 {
+                      copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+                      uri /api/authz/forward-auth
+              }
+              reverse_proxy whoami:80
+              tls {
+                      dns cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}
+              }
+      }
+
 services:
   caddy:
     build:
@@ -5,15 +26,12 @@ services:
         FROM caddy:2-builder AS builder
 
         RUN xcaddy build \
-            --with github.com/lucaslorentz/caddy-docker-proxy/v2 \
             --with github.com/caddy-dns/cloudflare \
             --with github.com/fabriziosalmi/caddy-waf
 
         FROM caddy:2
 
         COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-
-        CMD ["caddy", "docker-proxy"]
 
     container_name: caddy
     ports:
@@ -36,11 +54,16 @@ services:
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
 
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+
     volumes:
       - ${CONFIGS_DIR}/caddy/data:/data
       - ${CONFIGS_DIR}/caddy/config:/config
+
     networks:
-      - caddy
+      - proxy
       - docker
     security_opt:
       - no-new-privileges:true
