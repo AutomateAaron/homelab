@@ -7,103 +7,44 @@ configs:
       log:
         level: debug
 
-      theme: dark
+      theme: auto
+
+      totp:
+        issuer: ${DOMAIN_NAME}
 
       identity_validation:
         reset_password:
           # CHANGE THIS - Generate with: openssl rand -hex 32
-          jwt_secret: a_very_important_secret_change_this
-
-      totp:
-        issuer: ${DOMAIN_NAME}
-        period: 30
-        skew: 1
+          jwt_secret: a_very_important_secret
 
       authentication_backend:
-        ldap:
-          implementation: 'lldap'
-          # Format is [<scheme>://]<hostname>[:<port>]
-          # ldap port for LLDAP is 3890 and ldaps 6360
-          address: 'ldap://lldap:3890'
-
-          # Set base dn that you configured in LLDAP
-          base_dn: '${LLDAP_LDAP_BASE_DN}'
-          # The username and password of the bind user.
-          # "bind_user" should be the username you created for authentication with the "lldap_strict_readonly" permission. It is not recommended to use an actual admin account here.
-          # If you are configuring Authelia to change user passwords, then the account used here needs the "lldap_password_manager" permission instead.
-
-          user: 'UID=${AUTHELIA_LDAP_USER_NAME},OU=people,${LLDAP_LDAP_BASE_DN}'
-          # Password can also be set using a secret: https://www.authelia.com/configuration/methods/secrets/.
-          password: ${AUTHELIA_LDAP_USER_PASS}
-          # Optional: Setup TLS if you've enabled LDAPS
-          # tls:
-          #  skip_verify: false
-          #  minimum_version: TLS1.2
-
-        # file:
-        #   path: /config/users_database.yml
-        #   password:
-        #     algorithm: argon2id
-        #     iterations: 1
-        #     salt_length: 16
-        #     parallelism: 8
-        #     memory: 64
+        file:
+          path: '/config/users_database.yml'
 
       access_control:
         default_policy: deny
         rules:
-          # Allow access to Authelia itself
-          - domain: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
-            policy: bypass
-
-          # Allow access to Authelia itself
-          - domain: ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}
-            policy: bypass
-
-          # ADMIN USERS
-          - domain: ${TRAEFIK_SUBDOMAIN:-traefik}.${DOMAIN_NAME}
-            policy: one_factor
-            subject:
-              - "group:admin"
-              - "group:traefik_user"
-
-          - domain: ${LLDAP_SUBDOMAIN:-lldap}.${DOMAIN_NAME}
-            policy: one_factor
-            subject:
-              - "group:admin"
-              - "group:lldap_admin"
-
-          # ALL USERS
           - domain: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
-            policy: one_factor
-
-          # - domain: ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}
-          #   policy: one_factor
-          
-          # # Require authentication for all other domains (except whoami)
-          # - domain: "*.${DOMAIN_NAME}"
-          #   policy: one_factor
+            policy: two_factor
 
       session:
-        name: authelia_session
-        # CHANGE THIS - Generate with: openssl rand -hex 32
-        secret: unsecure_session_secret_change_this
-        expiration: 3600  # 1 hour
-        inactivity: 300   # 5 minutes
-        same_site: lax
+        # This secret can also be set using the env variables AUTHELIA_SESSION_SECRET_FILE
+        secret: 'insecure_session_secret'
         cookies:
-          - domain: ${DOMAIN_NAME}
-            authelia_url: https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
-            # default_redirection_url: https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
+          - name: 'authelia_session'
+            domain: ${DOMAIN_NAME}
+            authelia_url: 'https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}/'
+            # default_redirection_url: 'https://${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}/'
+            expiration: '1 hour'
+            inactivity: '5 minutes'
 
       regulation:
         max_retries: 3
-        find_time: 120
-        ban_time: 300
+        find_time: '2 minutes'
+        ban_time: '5 minutes'
 
       storage:
-        # CHANGE THIS - Generate with: openssl rand -hex 32
-        encryption_key: you_must_generate_a_random_key_of_more_than_twenty_chars_and_configure_this
+        encryption_key: 'you_must_generate_a_random_string_of_more_than_twenty_chars_and_configure_this'
         local:
           path: /config/db.sqlite3
 
@@ -111,20 +52,36 @@ configs:
         # For testing - use SMTP in production
         filesystem:
           filename: /config/notification.txt
+
+  users_database:
+    content: | # yaml
+      users:
+        Aaron@AutomateAaron.com:
+          disabled: false
+          displayname: 'Aaron Brock ☂️'
+          # Password is authelia
+          password: '$$argon2id$$v=19$$m=65536,t=3,p=4$$82a1q/sTLzicz/ynyN0p1w$$7DbBZYuKOpUnRohndRbvblVU7dagDvI/a6pRDSqCyPc'  # yamllint disable-line rule:line-length
+          email: 'aaron@automateaaron.com'
+          groups:
+            - 'admins'
+            - 'dev'
+
 services:
   authelia:
     container_name: 'authelia'
     image: 'authelia/authelia'
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
-      - traefik
-    depends_on:
-      - lldap
+      - caddy
     configs:
       - source: authelia_config
         target: /config/configuration.yml
-    # volumes:
-    #   - '${CONFIGS_DIR}/authelia:/config'
+      - source: users_database
+        target: /config/users_database.yml
+
+    volumes:
+      - '${CONFIGS_DIR}/authelia:/config'
+
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -132,14 +89,6 @@ services:
     ports:
       - 9091:9091
     labels:
-      traefik.enable: 'true'
-      traefik.http.routers.authelia.rule: Host(`${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}`)
-      traefik.http.routers.authelia.entrypoints: 'websecure'
-      traefik.http.routers.authelia.tls: 'true'
-      traefik.http.services.authelia.loadbalancer.server.port: '9091'
-      traefik.http.middlewares.authelia.forwardAuth.address: 'http://authelia:9091/api/authz/forward-auth'
-      ## The following commented line is for configuring the Authelia URL in the proxy. We strongly suggest this is
-      ## configured in the Session Cookies section of the Authelia configuration.
-      # traefik.http.middlewares.authelia.forwardAuth.address: 'http://authelia:9091/api/authz/forward-auth?authelia_url=https%3A%2F%2F${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}%2F'
-      traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader: 'true'
-      traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders: 'Remote-User,Remote-Groups,Remote-Email,Remote-Name'
+      caddy: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
+      caddy.reverse_proxy: "{{upstreams 9091}}"
+      caddy.tls.dns: "cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}"

@@ -15,9 +15,8 @@ include:
     - apps/caddy.yaml # Caddy (Reverse Proxy)
     - apps/whoami.yaml # WhoAmI (Test WebServer)
     - apps/cloudflared.yaml
+    - apps/authelia.yaml # Authelia (Authentication)
     # - apps/traefik.yaml
-    # - apps/whoami.yaml
-    # - apps/authelia.yaml # Authelia (Authentication)
     # - apps/lldap.yaml # LLDap (Identity Management)
     # - apps/gluetun.yaml
 
