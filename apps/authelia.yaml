@@ -1,6 +1,6 @@
 configs:
   authelia_config:
-    content: | # yaml
+    content: | #shell
       server:
         address: 'tcp://0.0.0.0:9091/'
 
@@ -12,6 +12,109 @@ configs:
       totp:
         issuer: ${DOMAIN_NAME}
 
+      identity_providers:
+        oidc:
+          # HMAC secret for signing - generate with: openssl rand -hex 32
+          hmac_secret: 'replace_me_with_a_real_key'
+
+          # Token lifespans
+          authorization_policies:
+            policy_name:
+              default_policy: two_factor
+              rules:
+                - policy: 'deny'
+                  subject: 'group:services'
+                  networks:
+                    - '192.168.1.0/24'
+                    - '192.168.2.51'
+
+          lifespans:
+            access_token: '1h'
+            authorize_code: '1m'
+            id_token: '1h'
+            refresh_token: '90m'
+
+          # RSA key for signing JWTs
+          jwks:
+            - key_id: 'main'
+              algorithm: 'RS256'
+              use: 'sig'
+              key: |
+                -----BEGIN PRIVATE KEY-----
+                MIIJQQIBADANBgkqhkiG9w0BAQEFAASCCSswggknAgEAAoICAQC5Jddgu0kclTDB
+                tV14psBN47nVOqpplzoYe/xOq8KXrsRLbZ5SIWyXbnRRnkE31JGJ1AzTNKOkx5xt
+                pcVeKfIRMG1ZLbNKa50aSLX7v049fsfvVtp+CR/mU6HSUc7LiQN/shP76DuT9j4J
+                O7C5BNpwBZlup8I7vYYnWYbTPvqYhDeCSV1gqOwtslaW8jrKERgxrae6iqc7nO0N
+                empiX5OxyUs7nqfYU1Kpq5dcmzGeUALHjUPq6DfWu5f/SApJQvfiyem6Z+Jmige2
+                icAqx+9fumdhwuVutiGo8tiqbRknBoU9SqPbZOoIzSNXgISdHU9PRRtS760Rhmkz
+                KgfXoLlhOKuYO48BVFw+SJKEs+D6DLOV9HwNOt06z7F48AkwM2yITlxPHHmnmIb2
+                FyzjZ6i0QeBWgWc/wL8paRolpTfn/Gl+rKTd7NPs507FFA7xUoCTQwmMp4dgmYgr
+                d3X5JUmXtz+M66wvWtCXfHCLfQLHHOWST27vt3FS7Me/wjem6846bJhNQGnFJF7F
+                sK+vheseP1Vw2ptXyWxBQsUh7IXAAGPVEa1an57eJlZ2yuW+F7/f15Upmf/hvAts
+                wkvcVF7XzAfiXJ5x2Wxhaf+BjlQb4xM3lCPJBHRbB0jJYQuQeuKzpFnqwm2bpCmx
+                hOcgnsxayYd5qDOhLo9UmnbYbDGjMQIDAQABAoIB/3kP8wTEA8paeeudNME4kOE4
+                tC742vT5UegMBa5rRZIf4ky4/AzKTi3/giG3mP+640qgwZ19RMyn3WEd+p2zKx5J
+                FTcM6tzHt9a362te/hwld80RBrq+Kl2eZBX0MTquQP/+VZLYvhwvXeEHHZAmbonj
+                aIt7gY7p+XwczgLTD/aX60YqVyRmK3YjivrxetrciX6El0NrnQBCXAe0HzdGEMPK
+                0jjpsp+At5WVb9pLe3iSD4hZuwYMdi1paieLRcDYklAKyQmjGrkD46vKL9QSjDLw
+                lE1hYtrTvK6y93lUE8v57lxA1og56vJWVOEQDIH4epEaqAMuWXLuZ1tNKXgnX+ov
+                AdZ1f6W7ehlWgDQ0ubgWqlUOzqfc5Fv4aEY4zX0UEmSZEpWP9CJ31S738lAL7ICx
+                plC+MpeSKoSxo4lNIIfcxjQ6zrDphQ8QP+ljuI8fTbd8yLfHA8YR0N8+3FhVoWOu
+                TupPrsghRRNpJltqV2eT5dkdD1vDcwyUixaat4WIUmsbglWmJjZIgLQoGrFCHmCP
+                sJOpJZkOveR5VvBM0u/TQXhL6bknB5Br3bgFnK4EFPmagUeIKt8oTfVcbRmz9xIU
+                A5NvLfWwZtCeCrvG4qzCE66RP26E2x2WP7ehrASUjGhNe9iygTDYqE9XxO3xsjh+
+                7JPXNhq1IsX5XsRN+x0CggEBAPTGxSa52woAuU3vlcx2UUapp18cu0A2hn5PqVcr
+                xO9RRGeqrxP8hpiHlo3QTbHOGWrWXXjl+cVsgunHmCMvOoV8yqW8OdYzjAoqlTGZ
+                c/deIhi4nuE3qSFv0fYPZ+PohsbfbVxBcJjlGqw1zIwhHFpdrusrQCnGDD/ueFLb
+                vO+ECMIIoIr13ZL9u52j6+AMHtGg3/3ulocwq4twuQ023xAJdOl1Ipp63B6VINKr
+                Y7+64qclum0O4JFhSAu76r2n1Zl9RZFZqB1pBuAf3owL7vrP3gzXfxlq3FpNK5NA
+                /zVREYsu5zNOtx8EC/vaeO+UQ8BfV7thGHmE0XMWHw2Er6UCggEBAMGjI8BCY5ov
+                NUy9hf35HIXfxyKDbLNozxLDXnJ1igjcjTang9ygVIQr0eKhB4wXRBan3MujqaIe
+                BlmBEFua7no6GzJQQ/NZCRKiH0k2l6YsPyBD1XwAVNyfBT5Mz/zCp+v6Do4CxZkm
+                U0y+Z8c7MKVWrjrW+1yWUNf3OcXYlKvbSHDwjGfPHNDKh2ZqUoX9RKD/5Jp2SVSA
+                lzBIsN18gXR0lBMY5ExOHaIpOb0rkgYErNV4aC63QXK1+37dBAQuQr7kf5jmyWOi
+                BCgbEm+chs8wtQNyFisMPQ5piVc39aiL6sBAJFOmTQQYdoH936uj+96a/mZmXOrb
+                IdF1/B7GT50CggEAH23yXKGapXMoWAB+bI14rCkWi5jl1j3qEQfrh3zgQZZewSzi
+                ZB+VrLokM7tebok3LEewItjstFPVj20IdOQYkJFQd+1uQ7nErn1/QKoigM2+dQwn
+                omWCOv/fpsedoF74B0sjAKiKa6dnQFt8EzYhLN1Am4OnLnX2lrLpEkKSxPJgKYHw
+                E0e0lq4ry/cDT3Ze8q3EdReQjnVKYZIswKyeAbIlJ+DZe5pw7yBY4ZQOL80wUyP+
+                BwjU/vXNyWvsnUOSoq26JAquEnCs6FRPQA48NkpAiceV006sUo/8G2FKI69wID36
+                g9UEoF/lpgYMZz7TYD0dx7qU6O2L80oQ3Kx/3QKCAQAc2tiq/7mj8kD5DIz5CbQs
+                ZupfxEHggk/JNf/PAqDtLSCF8nR93g56G6WNJf3f7F+jGKSYW+0dUWgU0lzDqdS7
+                tgjzeG6Hxs7JTgtnd5ElnBZUEoevkMUUk0XOwNeFjORFD+A3XUZgygtDtmP0lmdr
+                W/1em0adx3CInjinuNx+t5CV8+KYXY6ntmZy5okhmlotu7QvKE1JIFhnQ43Hk5Qe
+                7HhcWCs9C67yyT3naKS77NpsfSLZQ0mndGLjxr+gd9xOYfJ5sHp2NGB2MYKPyz1z
+                hoiS2N9gztQSX7utmZMr6J20xFoldPSpFZQjTteT1j3kMCiUzdAu1zS05+YIF/kp
+                AoIBAQCIWVroGFj1WlQaxVoLd/+v3x4HCmJABBcWdbp4jTUEpVxCqPxi7NuZizbf
+                9UH9sLsf/1JtKsnA2hYZNGF/X8edgFki0jSEMrpwdgkDONWHJdM9wem+LmgFbWtd
+                5oX/4xCZQxWTQMXyYG1jJzF8bkNuoeOxuRD+UXaENd9IqljeNEaOdNCvGPIx9Ewq
+                dWqoAG7bC5jUaT8zNxbR5W/SIPabED39AbuGDaqDZiYnFeyjc3bBbBIoPtCVTfnc
+                QT0gl18C6p4tbQ6Qw3qWJ+Qx8UeWPT5EVtKQE5pUt/4ZYufv7I6W0hV6ays/zykY
+                9bJ2JWnoaWIVfsu5yZKodsyFaYHU
+                -----END PRIVATE KEY-----
+
+          clients:
+            - client_id: 'jellyfin'
+              client_name: 'Jellyfin'
+              client_secret: '$$pbkdf2-sha512$$310000$$c8p78n7pUMln0jzvd4aK4Q$$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
+              public: false
+              authorization_policy: 'two_factor'
+              require_pkce: true
+              pkce_challenge_method: 'S256'
+              redirect_uris:
+                - 'https://jellyfin.232.blue/sso/OID/redirect/authelia'
+              scopes:
+                - 'openid'
+                - 'profile'
+                - 'groups'
+              response_types:
+                - 'code'
+              grant_types:
+                - 'authorization_code'
+              access_token_signed_response_alg: 'none'
+              userinfo_signed_response_alg: 'none'
+              token_endpoint_auth_method: 'client_secret_post'
+
       identity_validation:
         reset_password:
           # CHANGE THIS - Generate with: openssl rand -hex 32
@@ -22,10 +125,10 @@ configs:
           path: '/config/users_database.yml'
 
       access_control:
-        default_policy: deny
+        default_policy: two_factor
         rules:
-          - domain: ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME}
-            policy: two_factor
+          - domain: ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}
+            policy: bypass
 
       session:
         # This secret can also be set using the env variables AUTHELIA_SESSION_SECRET_FILE
@@ -64,7 +167,7 @@ configs:
           email: 'aaron@automateaaron.com'
           groups:
             - 'admins'
-            - 'dev'
+            - 'users'
 
 services:
   authelia:
@@ -80,7 +183,8 @@ services:
         target: /config/users_database.yml
 
     volumes:
-      - '${CONFIGS_DIR}/authelia:/config'
+      - ${CONFIGS_DIR}/authelia:/config
+      - ${SECRETS_DIR}/authelia:/secret
 
     environment:
       PUID: ${PUID}

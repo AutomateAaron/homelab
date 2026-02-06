@@ -23,9 +23,7 @@ include:
     #############################################################################
 
     # - apps/heimdall.yaml # Heimdall (Landing Page)
-    # - apps/plex.yaml # Plex (Media Server)
-
-    # - apps/jellyfin.yaml # Jellyfin (Media Server)
+    - apps/jellyfin.yaml # Jellyfin (Media Server)
     # - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
     # - apps/jackett.yaml

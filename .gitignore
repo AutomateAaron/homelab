@@ -1,15 +1,13 @@
 # Secrets
 .env*
 
-data/*/*
-!data/books/.gitkeep
-!data/configs/.gitkeep
-!data/downloads/.gitkeep
-!data/logs/.gitkeep
-!data/movies/.gitkeep
-!data/secrets/.gitkeep
-!data/cache/.gitkeep
-!data/tv/.gitkeep
+appdata/*/*
+!appdata/*/.gitkeep
+
+
+
+media/*/*
+!media/*/.gitkeep
 
 # Agents
 .claude/

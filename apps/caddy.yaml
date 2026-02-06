@@ -1,22 +1,34 @@
 configs:
   caddyfile:
     content: | # yaml
-      ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME} {
-              reverse_proxy authelia:9091
+      (authelia) {
+              forward_auth http://authelia:9091 {
+                      copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
+                      uri /api/authz/forward-auth
+              }
+      }
+
+      (cloudflare_tls) {
               tls {
                       dns cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}
               }
       }
 
+      ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME} {
+              reverse_proxy authelia:9091
+              import cloudflare_tls
+      }
+
       ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME} {
-              forward_auth http://authelia:9091 {
-                      copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
-                      uri /api/authz/forward-auth
-              }
+              import authelia
               reverse_proxy whoami:80
-              tls {
-                      dns cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}
-              }
+              import cloudflare_tls
+      }
+
+      ${jellyfin_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME} {
+              import authelia
+              reverse_proxy jellyfin:8096
+              import cloudflare_tls
       }
 
 services:

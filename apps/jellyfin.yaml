@@ -4,24 +4,22 @@ services:
     image: ghcr.io/jellyfin/jellyfin:latest
     # profiles: ["media", "all"]
     ports:
-    - 8096:8096
+    - 8096:80
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
     volumes:
+      # AppData
       - ${CONFIGS_DIR}/jellyfin:/config
       - ${CACHE_DIR}/jellyfin:/cache
+
+      # Media
       - ${DOWNLOADS_DIR}:/downloads
       - ${MOVIES_DIR}:/movies
-      - ${TV_DIR}:/tv
+      - ${SHOWS_DIR}:/shows
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
-      traefik:
-    labels:
-      traefik.enable: true
-      traefik.http.routers.jellyfin.rule: Host(`${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}`)
-      traefik.http.routers.jellyfin.entrypoints: websecure
-      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+      - proxy
