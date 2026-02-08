@@ -64,6 +64,8 @@ services:
         protocol: tcp
         mode: host # Caddy admin API
     environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
       DOCKER_HOST: tcp://socket-proxy:2375
 
     configs:

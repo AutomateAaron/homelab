@@ -2,13 +2,17 @@ services:
   jellyfin:
     container_name: jellyfin
     image: ghcr.io/jellyfin/jellyfin:latest
-    # profiles: ["media", "all"]
     ports:
     - 8096:80
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+
+    configs:
+      - source: jellyfin_sso_auth
+        target: /config/plugins/configurations/SSO-Auth.xml
+
     volumes:
       # AppData
       - ${CONFIGS_DIR}/jellyfin:/config
@@ -18,8 +22,74 @@ services:
       - ${DOWNLOADS_DIR}:/downloads
       - ${MOVIES_DIR}:/movies
       - ${SHOWS_DIR}:/shows
+
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
       - proxy
+
+configs:
+  jellyfin_sso_auth:
+    content: | # language=xml
+      <?xml version="1.0" encoding="utf-8"?>
+      <PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+        <SamlConfigs />
+        <OidConfigs>
+          <item>
+            <key>
+              <string>authelia</string>
+            </key>
+            <value>
+              <PluginConfiguration>
+                <OidEndpoint>https://authelia.232.blue</OidEndpoint>
+                <OidClientId>jellyfin</OidClientId>
+                <OidSecret>${JELLYFIN_OID_SECRET}</OidSecret>
+                <Enabled>true</Enabled>
+                <EnableAuthorization>true</EnableAuthorization>
+                <EnableAllFolders>true</EnableAllFolders>
+                <EnabledFolders />
+                <AdminRoles>
+                  <string>jellyfin-admins</string>
+                  <string>admins</string>
+                </AdminRoles>
+                <Roles>
+                  <string>users</string>
+                  <string>admins</string>
+                  <string>jellyfin-users</string>
+                  <string>jellyfin-admins</string>
+                </Roles>
+                <EnableFolderRoles>false</EnableFolderRoles>
+                <EnableLiveTvRoles>false</EnableLiveTvRoles>
+                <EnableLiveTv>false</EnableLiveTv>
+                <EnableLiveTvManagement>false</EnableLiveTvManagement>
+                <LiveTvRoles />
+                <LiveTvManagementRoles />
+                <FolderRoleMappings />
+                <RoleClaim>groups</RoleClaim>
+                <OidScopes>
+                  <string>groups</string>
+                </OidScopes>
+                <SchemeOverride>https</SchemeOverride>
+                <PortOverride xsi:nil="true" />
+                <NewPath>true</NewPath>
+                <CanonicalLinks>
+                  <item>
+                    <key>
+                      <string>Aaron@AutomateAaron.com</string>
+                    </key>
+                    <value>
+                      <guid>71ac16d2-3e0d-4c6b-94d4-53434bc35d2c</guid>
+                    </value>
+                  </item>
+                </CanonicalLinks>
+                <DefaultUsernameClaim>preferred_username</DefaultUsernameClaim>
+                <DisableHttps>false</DisableHttps>
+                <DisablePushedAuthorization>true</DisablePushedAuthorization>
+                <DoNotValidateEndpoints>false</DoNotValidateEndpoints>
+                <DoNotValidateIssuerName>false</DoNotValidateIssuerName>
+              </PluginConfiguration>
+            </value>
+          </item>
+        </OidConfigs>
+      </PluginConfiguration>

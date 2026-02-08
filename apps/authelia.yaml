@@ -15,7 +15,7 @@ configs:
       identity_providers:
         oidc:
           # HMAC secret for signing - generate with: openssl rand -hex 32
-          hmac_secret: 'replace_me_with_a_real_key'
+          hmac_secret: '${AUTHELIA_HMAC_SECRET}'
 
           # Token lifespans
           authorization_policies:
@@ -96,7 +96,7 @@ configs:
           clients:
             - client_id: 'jellyfin'
               client_name: 'Jellyfin'
-              client_secret: '$$pbkdf2-sha512$$310000$$c8p78n7pUMln0jzvd4aK4Q$$JNRBzwAo0ek5qKn50cFzzvE9RXV88h1wJn5KGiHrD0YKtZaR/nCb2CJPOsKaPK0hjf.9yHxzQGZziziccp6Yng'  # The digest of 'insecure_secret'.
+              client_secret: '${AUTHELIA_JELLYFIN_CLIENT_SECRET}'
               public: false
               authorization_policy: 'two_factor'
               require_pkce: true
@@ -118,7 +118,7 @@ configs:
       identity_validation:
         reset_password:
           # CHANGE THIS - Generate with: openssl rand -hex 32
-          jwt_secret: a_very_important_secret
+          jwt_secret: '${AUTHELIA_JWT_SECRET}'
 
       authentication_backend:
         file:
@@ -132,7 +132,7 @@ configs:
 
       session:
         # This secret can also be set using the env variables AUTHELIA_SESSION_SECRET_FILE
-        secret: 'insecure_session_secret'
+        secret: '${AUTHELIA_SESSION_SECRET}'
         cookies:
           - name: 'authelia_session'
             domain: ${DOMAIN_NAME}
@@ -147,7 +147,7 @@ configs:
         ban_time: '5 minutes'
 
       storage:
-        encryption_key: 'you_must_generate_a_random_string_of_more_than_twenty_chars_and_configure_this'
+        encryption_key: '${AUTHELIA_STORAGE_ENCRYPTION_KEY}'
         local:
           path: /config/db.sqlite3
 
