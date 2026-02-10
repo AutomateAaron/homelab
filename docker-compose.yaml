@@ -16,7 +16,7 @@ include:
     - apps/whoami.yaml # WhoAmI (Test WebServer)
     - apps/cloudflared.yaml # Tunnel
     - apps/authelia.yaml # Authelia (Authentication & Identity)
-    # - apps/gluetun.yaml
+    - apps/gluetun.yaml
 
     #############################################################################
     # MEDIA

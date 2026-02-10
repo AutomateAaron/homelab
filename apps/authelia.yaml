@@ -1,6 +1,6 @@
 configs:
   authelia_config:
-    content: | #shell
+    content: | # yaml
       server:
         address: 'tcp://0.0.0.0:9091/'
 
@@ -96,13 +96,13 @@ configs:
           clients:
             - client_id: 'jellyfin'
               client_name: 'Jellyfin'
-              client_secret: '${AUTHELIA_JELLYFIN_CLIENT_SECRET}'
+              client_secret: '${AUTHELIA_JELLYFIN_CLIENT_SECRET_HASH}'
               public: false
               authorization_policy: 'two_factor'
               require_pkce: true
               pkce_challenge_method: 'S256'
               redirect_uris:
-                - 'https://jellyfin.232.blue/sso/OID/redirect/authelia'
+                - 'https://${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME}/sso/OID/redirect/authelia'
               scopes:
                 - 'openid'
                 - 'profile'
@@ -117,7 +117,6 @@ configs:
 
       identity_validation:
         reset_password:
-          # CHANGE THIS - Generate with: openssl rand -hex 32
           jwt_secret: '${AUTHELIA_JWT_SECRET}'
 
       authentication_backend:
@@ -131,7 +130,6 @@ configs:
             policy: bypass
 
       session:
-        # This secret can also be set using the env variables AUTHELIA_SESSION_SECRET_FILE
         secret: '${AUTHELIA_SESSION_SECRET}'
         cookies:
           - name: 'authelia_session'
@@ -192,7 +190,3 @@ services:
       TZ: ${TZ}
     ports:
       - 9091:9091
-    labels:
-      caddy: ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME}
-      caddy.reverse_proxy: "{{upstreams 9091}}"
-      caddy.tls.dns: "cloudflare ${CADDY_CLOUDFLARE_API_TOKEN}"

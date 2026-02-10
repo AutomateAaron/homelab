@@ -25,7 +25,7 @@ configs:
               import cloudflare_tls
       }
 
-      ${jellyfin_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME} {
+      ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME} {
               import authelia
               reverse_proxy jellyfin:8096
               import cloudflare_tls
