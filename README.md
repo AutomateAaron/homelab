@@ -1,17 +1,8 @@
-<div align="center">
- <h1>homelab</h1>
-  <a href="https://github.com/juftin/homelab">
-    <img src="docs/static/homelab.png" alt="homelab" width="350" />
-  </a>
-  <p align="center">
-    homelab deployment via docker compose <i>(made easy)</i>
-  </p>
-  <a href="https://github.com/juftin/homelab/"><img src="https://img.shields.io/github/v/release/juftin/homelab?color=blue&label=%F0%9F%A4%96%20homelab" alt="docs"></a>
-  <a href="https://juftin.com/homelab/"><img src="https://img.shields.io/static/v1?message=docs&color=526CFE&logo=Material+for+MkDocs&logoColor=FFFFFF&label=" alt="docs"></a>
-  <a href="https://github.com/pre-commit/pre-commit"><img src="https://img.shields.io/badge/pre--commit-enabled-lightgreen?logo=pre-commit" alt="pre-commit"></a>
-  <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a>
-  <a href="https://gitmoji.dev"><img src="https://img.shields.io/badge/gitmoji-%20😜%20😍-FFDD67.svg" alt="Gitmoji"></a>
-</div>
+# 232 Blue Homelab
+
+## Goal
+
+The goal for this repository is to provide a preconfigured homelab experiance that can be used by simply configuring the `.env` & running `docker compose up`
 
 ## What is homelab?
 
@@ -43,60 +34,35 @@ At the root of this repository is a `docker-compose.yaml` file that defines
 the entire homelab project - it uses the `include` directive to pull in
 individual service docker compose files from the `apps` directory.
 
+
+## Repository Structure
 ```text
 .
 ├── docker-compose.yaml                     # Main Docker Compose File
 ├── .env                                    # Environment Variables and Configuration
-├── Makefile                                # Makefile for common tasks and docker compose wrappers
-├── secrets                                 # Secret Files
-│   ├── cloudflare_api_key.secret           # Cloudflare API Key
-│   └── google_oauth.secret                 # Google OAuth Credentials and Whitelist
 ├── apps                                    # Individual Service Docker Compose Files
-│   ├── plex.yaml
-│   ├── radarr.yaml
-│   ├── ombi.yaml
-│   ├── sonarr.yaml
-│   ├── oauth.yaml
-│   ├── chat-gpt-next-web.yaml
-│   ├── watchtower.yaml
-│   └── traefik                             # Traefik Reverse Proxy
-│       ├── docker-compose.yaml             # Traefik Docker Compose File
-│       └── rules                           # Traefik Middlewares and Rules
-│           ├── middlewares-chains.yml
-│           ├── middlewares.yml
-│           └── tls-opts.yml
-└── appdata                                 # Application Data Persistent Volumes
-    ├── plex                                # Each individual service has its own subdirectory
-    ├── sonarr
-    ├── oauth
-    ├── traefik
-    ├── chat-gpt-next-web
-    ├── utilities
-    └── watchtower
+│   ├── authelia.yaml
+│   ├── bazarr.yaml
+│   ├── caddy.yaml
+│   └── ...
+├── appdata                                 # Application data which needs to persist
+│   ├── configs                             # Configuration for each service
+│   │   ├── authelia
+│   │   ├── bazarr
+│   │   ├── caddy
+│   │   └── ...
+│   ├── cache                               # Caches for each service
+│   ├── logs                                # Logs for each service
+│   └── secrets                             # Secrets for each service
+└── media                                   # Media folders shared across services
+    ├── books
+    ├── downloads
+    ├── movies
+    └── shows
 ```
 
 ### Configuration
 
-All services are configured via a `.env` file at the root of the project and a few secret
-files in the `secrets` directory. These files are used to define settings and credentials
-for all services that are deployed. You can copy the example files to get started:
-
-```shell
-cp docs/example.env .env
-cp -r docs/example-secrets/ secrets/
-```
-
-See the [docs](https://juftin.github.io/homelab/) for more information on configuration and
-getting started.
-
-[traefik]: https://github.com/traefik/traefik
-[OAuth]: https://github.com/thomseddon/traefik-forward-auth
-[Plex]: https://www.plex.tv/
-[Sonarr]: https://github.com/sonarr/sonarr
-[Radarr]: https://github.com/Radarr/Radarr
-[Ombi]: https://github.com/Ombi-app/Ombi
-[ChatGPT Next Web]: https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web
-[Watchtower]: https://github.com/containrrr/watchtower
-[LibreOffice Online]: https://www.libreoffice.org/
-[Portainer]: https://github.com/portainer/portainer
-[docker compose profile]: https://docs.docker.com/compose/profiles/
+All service's shared configuration & secrets are configurable in `.env` file at the root 
+of the project.  Some service configuration is stored in the respective docker-compose 
+file in `apps/<service>.yaml.

@@ -7,4 +7,4 @@ services:
     networks:
       - proxy
     environment:
-      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+      - TUNNEL_TOKEN=${CLOUDFLARED_TUNNEL_TOKEN}
