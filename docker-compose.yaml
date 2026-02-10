@@ -24,7 +24,7 @@ include:
 
     # - apps/heimdall.yaml # Heimdall (Landing Page)
     - apps/jellyfin.yaml # Jellyfin (Media Server)
-    # - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
+    - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
     # - apps/jackett.yaml
     # - apps/prowlarr.yaml # Prowlarr (Indexer)

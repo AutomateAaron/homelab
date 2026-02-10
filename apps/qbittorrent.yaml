@@ -16,9 +16,4 @@ services:
       - ${DOWNLOADS_DIR}:/downloads
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     network_mode: service:gluetun
-    labels:
-      traefik.enable: true
-      traefik.http.routers.qbittorrent-rtr.rule: Host(`${QBITTORRENT_SUBDOMAIN:-qbittorrent}.${DOMAIN_NAME}`)
-      traefik.http.routers.qbittorrent-rtr.entrypoints: websecure
-      traefik.http.routers.qbittorrent-rtr.service: qbittorrent-svc
-      traefik.http.services.qbittorrent-svc.loadbalancer.server.port: 8080
+

@@ -1,3 +1,27 @@
+services:
+  authelia:
+    container_name: 'authelia'
+    image: 'authelia/authelia'
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    networks:
+      - proxy
+    configs:
+      - source: authelia_config
+        target: /config/configuration.yml
+      - source: users_database
+        target: /config/users_database.yml
+
+    volumes:
+      - ${CONFIGS_DIR}/authelia:/config
+      - ${SECRETS_DIR}/authelia:/secret
+
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    ports:
+      - 9091:9091
+
 configs:
   authelia_config:
     content: | # yaml
@@ -96,7 +120,7 @@ configs:
           clients:
             - client_id: 'jellyfin'
               client_name: 'Jellyfin'
-              client_secret: '${AUTHELIA_JELLYFIN_CLIENT_SECRET_HASH}'
+              client_secret: '${AUTHELIA_JELLYFIN_OID_SECRET_HASH}'
               public: false
               authorization_policy: 'two_factor'
               require_pkce: true
@@ -167,26 +191,3 @@ configs:
             - 'admins'
             - 'users'
 
-services:
-  authelia:
-    container_name: 'authelia'
-    image: 'authelia/authelia'
-    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    networks:
-      - proxy
-    configs:
-      - source: authelia_config
-        target: /config/configuration.yml
-      - source: users_database
-        target: /config/users_database.yml
-
-    volumes:
-      - ${CONFIGS_DIR}/authelia:/config
-      - ${SECRETS_DIR}/authelia:/secret
-
-    environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      TZ: ${TZ}
-    ports:
-      - 9091:9091

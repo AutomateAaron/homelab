@@ -31,6 +31,12 @@ configs:
               import cloudflare_tls
       }
 
+      ${QBITTORRENT_SUBDOMAIN:-qbittorrent}.${DOMAIN_NAME} {
+              import authelia
+              reverse_proxy gluetun:8080
+              import cloudflare_tls
+      }
+
 services:
   caddy:
     build:
