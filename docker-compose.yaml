@@ -17,6 +17,7 @@ include:
     - apps/cloudflared.yaml # Tunnel
     - apps/authelia.yaml # Authelia (Authentication & Identity)
     - apps/gluetun.yaml
+    - apps/forwardarr.yaml # Forwardarr (Port Sync for Gluetun & qBittorrent)
 
     #############################################################################
     # MEDIA
@@ -27,10 +28,10 @@ include:
     - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
     # - apps/jackett.yaml
-    # - apps/prowlarr.yaml # Prowlarr (Indexer)
-    # - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
+    - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
+    - apps/prowlarr.yaml # Prowlarr (Indexer)
+    - apps/radarr.yaml # Radarr (Movie Downloads)
     # - apps/sonarr.yaml # Sonarr (TV Show Downloads)
-    # - apps/radarr.yaml # Radarr (Movie Downloads)
     # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
     # - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
 

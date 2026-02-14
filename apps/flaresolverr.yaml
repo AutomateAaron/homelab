@@ -9,8 +9,9 @@ services:
       - TZ=${TZ}
       #- LANG=fr_FR
       #- LANG=en_US
-    ports:
-      - 8191:8191
+    # ports:
+    #   - 8191:8191 
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    networks:
-      traefik:
+    network_mode: service:gluetun
+    depends_on:
+      - gluetun

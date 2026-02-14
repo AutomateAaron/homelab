@@ -37,6 +37,18 @@ configs:
               import cloudflare_tls
       }
 
+      ${PROWLARR_SUBDOMAIN:-prowlarr}.${DOMAIN_NAME} {
+              import authelia
+              reverse_proxy gluetun:9696
+              import cloudflare_tls
+      }
+
+      ${RADARR_SUBDOMAIN:-radarr}.${DOMAIN_NAME} {
+              import authelia
+              reverse_proxy gluetun:7878
+              import cloudflare_tls
+      }
+
 services:
   caddy:
     build:
