@@ -8,6 +8,7 @@ services:
       - 8191:8191 # For flaresolverr
       - 8080:8080 # For qbittorrent
       - 9696:9696 # For prowlarr
+      - 8686:8686 # For lidarr
       - 7878:7878 # For radarr
 
       - 51820:51820

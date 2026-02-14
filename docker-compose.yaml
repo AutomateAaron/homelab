@@ -31,7 +31,7 @@ include:
     - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
     - apps/prowlarr.yaml # Prowlarr (Indexer)
     - apps/radarr.yaml # Radarr (Movie Downloads)
-    # - apps/sonarr.yaml # Sonarr (TV Show Downloads)
+    - apps/sonarr.yaml # Sonarr (TV Show Downloads)
     # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
     # - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
 

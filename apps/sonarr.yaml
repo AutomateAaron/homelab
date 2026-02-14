@@ -2,11 +2,10 @@ services:
   sonarr:
     container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
-    # profiles: ["media", "arrs", "all"]
     volumes:
       - ${CONFIGS_DIR}/sonarr:/config
       - ${DOWNLOADS_DIR}:/downloads
-      - ${TV_DIR}:/tv
+      - ${SHOWS_DIR}:/shows
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -14,11 +13,7 @@ services:
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-    networks:
-      traefik:
-    labels:
-      traefik.enable: true
-      traefik.http.routers.sonarr-rtr.rule: Host(`${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME}`)
-      traefik.http.routers.sonarr-rtr.entrypoints: websecure
-      traefik.http.routers.sonarr-rtr.service: sonarr-svc
-      traefik.http.services.sonarr-svc.loadbalancer.server.port: 8989
+    # Run through VPN
+    network_mode: service:gluetun
+    depends_on:
+      - gluetun

@@ -49,6 +49,12 @@ configs:
               import cloudflare_tls
       }
 
+      ${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME} {
+              import authelia
+              reverse_proxy gluetun:8989
+              import cloudflare_tls
+      }
+
 services:
   caddy:
     build:
