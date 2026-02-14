@@ -1,8 +1,7 @@
 services:
   jellyseerr:
     container_name: jellyseerr
-    image: fallenbagel/jellyseerr:latest
-    # profiles: ["media", "all"]
+    image: ghcr.io/fallenbagel/jellyseerr:latest
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -13,10 +12,4 @@ services:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
-      traefik:
-    labels:
-      traefik.enable: true
-      traefik.http.routers.jellyseerr-rtr.rule: Host(`${JELLYSEERR_SUBDOMAIN:-jellyseerr}.${DOMAIN_NAME}`)
-      traefik.http.routers.jellyseerr-rtr.entrypoints: websecure
-      traefik.http.routers.jellyseerr-rtr.service: jellyseerr-svc
-      traefik.http.services.jellyseerr-svc.loadbalancer.server.port: 5055
+      - proxy
