@@ -4,20 +4,17 @@
 
 include:
     #############################################################################
-    # TRAEFIK (CORE)
+    # UTILITIES (CORE)
     #############################################################################
 
-    # - apps/traefik/docker-compose.yaml # Traefik (Reverse Proxy)
-    # - apps/duckdns.yaml # DuckDNS (Dynamic DNS)
-    # - apps/oauth.yaml # OAuth (Authentication)
-    
-    - apps/socket-proxy.yaml # Docker Socket Proxy (Security)
     - apps/caddy.yaml # Caddy (Reverse Proxy)
-    - apps/whoami.yaml # WhoAmI (Test WebServer)
-    - apps/cloudflared.yaml # Tunnel
     - apps/authelia.yaml # Authelia (Authentication & Identity)
-    - apps/gluetun.yaml
-    - apps/forwardarr.yaml # Forwardarr (Port Sync for Gluetun & qBittorrent)
+    - apps/socket-proxy.yaml # Socket Proxy (Secure access to Docker API)
+    - apps/cloudflared.yaml # Cloudflared (Remote access via Cloudflare)
+    - apps/gluetun.yaml # Gluetun (VPN Client)
+    - apps/whoami.yaml # WhoAmI (Test WebServer)
+    - apps/coredns.yaml # CoreDNS (DNS Server)
+
 
     #############################################################################
     # MEDIA
@@ -25,13 +22,14 @@ include:
 
     # - apps/heimdall.yaml # Heimdall (Landing Page)
     - apps/jellyfin.yaml # Jellyfin (Media Server)
-    - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
 
-    # - apps/jackett.yaml
-    - apps/flaresolverr.yaml # FlareSolverr (Cloudflare and DDoS-GUARD Bypasser)
+
+    - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
+    - apps/flaresolverr.yaml # FlareSolverr (DDoS-GUARD Bypasser)
     - apps/prowlarr.yaml # Prowlarr (Indexer)
     - apps/radarr.yaml # Radarr (Movie Downloads)
     - apps/sonarr.yaml # Sonarr (TV Show Downloads)
+
     # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
     # - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
 
@@ -48,7 +46,6 @@ include:
     # - apps/watchtower.yaml #  Watchtower (Container Updating)
     # - apps/postgres.yaml # PostgreSQL (Shared Database)
     # - apps/sftpgo.yaml # SFTPGo (File Management)
-    # - apps/pihole.yaml # Pi-hole (DNS Ad-Blocking)
     # - apps/portainer.yaml # Portainer (Container Management)
 
     #############################################################################

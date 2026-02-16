@@ -1,3 +1,60 @@
+services:
+  caddy:
+    build:
+      dockerfile_inline: |
+        FROM caddy:2-builder AS builder
+
+        RUN xcaddy build \
+            --with github.com/caddy-dns/cloudflare \
+            --with github.com/fabriziosalmi/caddy-waf
+
+        FROM caddy:2
+
+        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
+
+    container_name: caddy
+    ports:
+      - published: 80
+        target: 80
+        protocol: tcp
+        mode: host
+      - published: 443
+        target: 443
+        protocol: tcp
+        mode: host
+      - published: 443
+        target: 443
+        protocol: udp
+        mode: host # HTTP/3
+      - published: 2019
+        target: 2019
+        protocol: tcp
+        mode: host # Caddy admin API
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      DOCKER_HOST: tcp://socket-proxy:2375
+
+    configs:
+      - source: caddyfile
+        target: /etc/caddy/Caddyfile
+
+    volumes:
+      - ${CONFIGS_DIR}/caddy/data:/data
+      - ${CONFIGS_DIR}/caddy/config:/config
+
+    networks:
+      - proxy
+      - docker
+    security_opt:
+      - no-new-privileges:true
+
+    
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+
+    depends_on:
+      - socket-proxy
+
 configs:
   caddyfile:
     content: | # yaml
@@ -55,60 +112,5 @@ configs:
               import cloudflare_tls
       }
 
-services:
-  caddy:
-    build:
-      dockerfile_inline: |
-        FROM caddy:2-builder AS builder
 
-        RUN xcaddy build \
-            --with github.com/caddy-dns/cloudflare \
-            --with github.com/fabriziosalmi/caddy-waf
-
-        FROM caddy:2
-
-        COPY --from=builder /usr/bin/caddy /usr/bin/caddy
-
-    container_name: caddy
-    ports:
-      - published: 80
-        target: 80
-        protocol: tcp
-        mode: host
-      - published: 443
-        target: 443
-        protocol: tcp
-        mode: host
-      - published: 443
-        target: 443
-        protocol: udp
-        mode: host # HTTP/3
-      - published: 2019
-        target: 2019
-        protocol: tcp
-        mode: host # Caddy admin API
-    environment:
-      PUID: ${PUID}
-      PGID: ${PGID}
-      DOCKER_HOST: tcp://socket-proxy:2375
-
-    configs:
-      - source: caddyfile
-        target: /etc/caddy/Caddyfile
-
-    volumes:
-      - ${CONFIGS_DIR}/caddy/data:/data
-      - ${CONFIGS_DIR}/caddy/config:/config
-
-    networks:
-      - proxy
-      - docker
-    security_opt:
-      - no-new-privileges:true
-
-    
-    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
-
-    depends_on:
-      - socket-proxy
 

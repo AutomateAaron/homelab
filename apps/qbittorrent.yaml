@@ -24,6 +24,29 @@ services:
     depends_on:
       - gluetun
 
+  forwardarr:
+    container_name: forwardarr
+    image: ghcr.io/eslutz/forwardarr:latest
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - GLUETUN_PORT_FILE=/tmp/gluetun/forwarded_port
+      - TORRENT_CLIENT_URL=http://gluetun:8080
+      - TORRENT_CLIENT_USER=admin
+      - TORRENT_CLIENT_PASSWORD=${QBITTORRENT_PASSWORD}
+      - LOG_LEVEL=info
+    volumes:
+      - gluetun-data:/tmp/gluetun:ro
+    ports:
+      - 9090:9090
+    restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
+    networks:
+      - proxy
+    depends_on:
+      - gluetun
+      - qbittorrent
+
 configs:
   qbittorrent_conf:
     content: | # language=xml
