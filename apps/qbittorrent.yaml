@@ -8,17 +8,14 @@ services:
       - PGID=${PGID}
       - TZ=${TZ}
       #- DOCKER_MODS=ghcr.io/gabe565/linuxserver-mod-vuetorrent
-
     configs:
       - source: qbittorrent_conf
         target: /config/qBittorrent/qBittorrent.conf
       - source: categories_json
         target: /config/qBittorrent/categories.json
-
     volumes:
       - ${CONFIGS_DIR}/qbittorrent:/config
       - ${DOWNLOADS_DIR}:/downloads
-
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     network_mode: service:gluetun
     depends_on:

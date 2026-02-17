@@ -10,33 +10,23 @@ services:
       - 9696:9696 # For prowlarr
       - 8686:8686 # For lidarr
       - 7878:7878 # For radarr
-
-      - 51820:51820
-      - 51820:51820/udp
-      - 46931:46931
-      - 46931:46931/udp
-
+      - 6767:6767 # For bazarr
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
       - TZ=${TZ}
-
       # VPN Configuration
       - VPN_SERVICE_PROVIDER=protonvpn
       - VPN_TYPE=wireguard
-
       - WIREGUARD_PRIVATE_KEY=${PROTON_WG_PRIVATE_KEY}
-
       # --- REGION SETTINGS ---
       # Optional: Filter servers by country (e.g. Netherlands, Switzerland, Iceland)
       - SERVER_COUNTRIES=United States
       - SERVER_CITIES=Philadelphia,New York,Secaucus,Ashburn,Washington
-
       # --- PORT FORWARDING (Crucial for torrent performance) ---      
       - PORT_FORWARD_ONLY=on
       - VPN_PORT_FORWARDING=on
       - VPN_PORT_FORWARDING_STATUS_FILE=/tmp/gluetun/forwarded_port
-
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
       - proxy

@@ -8,23 +8,19 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
-
     configs:
       - source: jellyfin_sso_auth
         target: /config/plugins/configurations/SSO-Auth.xml
       - source: jellyfin_branding
         target: /config/branding.xml
-
     volumes:
       # AppData
       - ${CONFIGS_DIR}/jellyfin:/config
       - ${CACHE_DIR}/jellyfin:/cache
-
       # Media
       - ${DOWNLOADS_DIR}:/downloads
       - ${MOVIES_DIR}:/movies
       - ${SHOWS_DIR}:/shows
-
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}

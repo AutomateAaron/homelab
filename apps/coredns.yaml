@@ -1,20 +1,16 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json
-#######################################
-# HOSTED COREDNS
-#######################################
-
 services:
   coredns:
+    container_name: coredns
     image: coredns/coredns:latest
     configs:
       - source: corefile
         target: /Corefile
     security_opt:
-      - no-new-privileges:true    
+      - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
+      - 53:53/tcp
+      - 53:53/udp
     networks:
       - proxy
 
@@ -31,7 +27,7 @@ configs:
 
           # 3. Local DNS entries (The "Hosts" plugin)
           hosts {
-              ${SERVER_IP} ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME} ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME} ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME} ${QBITTORRENT_SUBDOMAIN:-qbittorrent}.${DOMAIN_NAME} ${PROWLARR_SUBDOMAIN:-prowlarr}.${DOMAIN_NAME} ${RADARR_SUBDOMAIN:-radarr}.${DOMAIN_NAME} ${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME} ${PIHOLE_SUBDOMAIN:-pihole}.${DOMAIN_NAME}
+              ${SERVER_IP} ${AUTHELIA_SUBDOMAIN:-authelia}.${DOMAIN_NAME} ${WHOAMI_SUBDOMAIN:-whoami}.${DOMAIN_NAME} ${JELLYFIN_SUBDOMAIN:-jellyfin}.${DOMAIN_NAME} ${QBITTORRENT_SUBDOMAIN:-qbittorrent}.${DOMAIN_NAME} ${PROWLARR_SUBDOMAIN:-prowlarr}.${DOMAIN_NAME} ${RADARR_SUBDOMAIN:-radarr}.${DOMAIN_NAME} ${SONARR_SUBDOMAIN:-sonarr}.${DOMAIN_NAME} ${BAZARR_SUBDOMAIN:-bazarr}.${DOMAIN_NAME}
               fallthrough
           }
 

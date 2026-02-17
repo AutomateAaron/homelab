@@ -15,23 +15,20 @@ include:
     - apps/whoami.yaml # WhoAmI (Test WebServer)
     - apps/coredns.yaml # CoreDNS (DNS Server)
 
-
     #############################################################################
     # MEDIA
     #############################################################################
 
     # - apps/heimdall.yaml # Heimdall (Landing Page)
     - apps/jellyfin.yaml # Jellyfin (Media Server)
-
-
     - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
     - apps/flaresolverr.yaml # FlareSolverr (DDoS-GUARD Bypasser)
     - apps/prowlarr.yaml # Prowlarr (Indexer)
     - apps/radarr.yaml # Radarr (Movie Downloads)
     - apps/sonarr.yaml # Sonarr (TV Show Downloads)
-
+    - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
     # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
-    # - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
+
 
     # - apps/sabnzbd.yaml # SABnzbd (Usenet Downloading)
     # - apps/nzbhydra.yaml # NZBHydra2 (Usenet Browsing)

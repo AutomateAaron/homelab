@@ -1,7 +1,7 @@
 services:
   authelia:
-    container_name: 'authelia'
-    image: 'authelia/authelia'
+    container_name: authelia
+    image: authelia/authelia
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
     networks:
       - proxy
@@ -10,11 +10,9 @@ services:
         target: /config/configuration.yml
       - source: users_database
         target: /config/users_database.yml
-
     volumes:
       - ${CONFIGS_DIR}/authelia:/config
       - ${SECRETS_DIR}/authelia:/secret
-
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
