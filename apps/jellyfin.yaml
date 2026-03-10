@@ -3,7 +3,7 @@ services:
     container_name: jellyfin
     image: ghcr.io/jellyfin/jellyfin:latest
     ports:
-    - 8096:80
+    - 8096:8096
     environment:
       PUID: ${PUID}
       PGID: ${PGID}
@@ -12,7 +12,7 @@ services:
       - source: jellyfin_sso_auth
         target: /config/plugins/configurations/SSO-Auth.xml
       - source: jellyfin_branding
-        target: /config/branding.xml
+        target: /config/config/branding.xml
     volumes:
       # AppData
       - ${CONFIGS_DIR}/jellyfin:/config
