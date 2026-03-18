@@ -4,13 +4,14 @@ services:
     image: qmcgaw/gluetun
     cap_add:
       - NET_ADMIN
-    ports:
-      - 8191:8191 # For flaresolverr
-      - 8080:8080 # For qbittorrent
-      - 9696:9696 # For prowlarr
-      - 8686:8686 # For lidarr
-      - 7878:7878 # For radarr
-      - 6767:6767 # For bazarr
+    # Disabling since all access is managed via caddy
+    # ports:
+    #   - 8191:8191 # For flaresolverr
+    #   - 8080:8080 # For qbittorrent
+    #   - 9696:9696 # For prowlarr
+    #   - 8686:8686 # For lidarr
+    #   - 7878:7878 # For radarr
+    #   - 6767:6767 # For bazarr
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
