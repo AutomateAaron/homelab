@@ -62,6 +62,15 @@ configs:
         api_key = "${PROWLARR_APIKEY}" # Using docker compose string substitution
       }
 
+      # --- Root Folders ---
+      resource "radarr_root_folder" "main" {
+        path = "/movies"
+      }
+
+      resource "sonarr_root_folder" "main" {
+        path = "/shows"
+      }
+
       # --- Download Clients ---
       resource "radarr_download_client_qbittorrent" "main" {
         enable   = true
@@ -72,7 +81,6 @@ configs:
         username = "admin"
         password = "${QBITTORRENT_PASSWORD}" # Using docker compose string substitution
         movie_category = "radarr"
-
       }
 
       resource "sonarr_download_client_qbittorrent" "main" {
@@ -118,6 +126,3 @@ configs:
         sync_categories       = [5000, 5010, 5020, 5030, 5040, 5045, 5050]
         anime_sync_categories = [5070]
       }
-
-
-

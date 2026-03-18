@@ -4,52 +4,30 @@
 
 include:
     #############################################################################
-    # UTILITIES (CORE)
+    # CORE
     #############################################################################
-
-    - apps/caddy.yaml # Caddy (Reverse Proxy)
-    - apps/authelia.yaml # Authelia (Authentication & Identity)
-    - apps/socket-proxy.yaml # Socket Proxy (Secure access to Docker API)
-    - apps/cloudflared.yaml # Cloudflared (Remote access via Cloudflare)
-    - apps/gluetun.yaml # Gluetun (VPN Client)
-    - apps/whoami.yaml # WhoAmI (Test WebServer)
-    - apps/coredns.yaml # CoreDNS (DNS Server)
+    - apps/core/caddy.yaml # Caddy (Reverse Proxy)
+    - apps/core/authelia.yaml # Authelia (Authentication & Identity)
+    - apps/core/socket-proxy.yaml # Socket Proxy (Secure access to Docker API)
+    - apps/core/cloudflared.yaml # Cloudflared (Remote access via Cloudflare)
+    - apps/core/whoami.yaml # WhoAmI (Test WebServer)
+    - apps/core/coredns.yaml # CoreDNS (DNS Server)
 
     #############################################################################
     # MEDIA
     #############################################################################
-
-    # - apps/heimdall.yaml # Heimdall (Landing Page)
-    - apps/jellyfin.yaml # Jellyfin (Media Server)
-    - apps/qbittorrent.yaml # qBittorrent (Torrent Client)
-    - apps/flaresolverr.yaml # FlareSolverr (DDoS-GUARD Bypasser)
-    - apps/prowlarr.yaml # Prowlarr (Indexer)
-    - apps/radarr.yaml # Radarr (Movie Downloads)
-    - apps/sonarr.yaml # Sonarr (TV Show Downloads)
-    - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
-    - apps/tofu.yaml # OpenTofu (Arr Configuration Management)
-    # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
-
-
-    # - apps/sabnzbd.yaml # SABnzbd (Usenet Downloading)
-    # - apps/nzbhydra.yaml # NZBHydra2 (Usenet Browsing)
-    # - apps/readarr.yaml # Readarr (Ebook Downloads)
-    # - apps/calibre.yaml # Calibre (Books Management)
-    # - apps/calibre-web.yaml # Calibre Web-UI
-
-    #############################################################################
-    # UTILITIES
-    #############################################################################
-
-    # - apps/watchtower.yaml #  Watchtower (Container Updating)
-    # - apps/postgres.yaml # PostgreSQL (Shared Database)
-    # - apps/sftpgo.yaml # SFTPGo (File Management)
-    # - apps/portainer.yaml # Portainer (Container Management)
+    - apps/media/gluetun.yaml # Gluetun (VPN Client)
+    - apps/media/jellyfin.yaml # Jellyfin (Media Server)
+    - apps/media/qbittorrent.yaml # qBittorrent (Torrent Client)
+    - apps/media/flaresolverr.yaml # FlareSolverr (DDoS-GUARD Bypasser)
+    - apps/media/prowlarr.yaml # Prowlarr (Indexer)
+    - apps/media/radarr.yaml # Radarr (Movie Downloads)
+    - apps/media/sonarr.yaml # Sonarr (TV Show Downloads)
+    - apps/media/bazarr.yaml # Subtitle (Subtitle Downloads)
+    - apps/media/tofu.yaml # OpenTofu (Arr Configuration Management)
 
     #############################################################################
     # MISCELLANEOUS
-    #
-    # * Note the existing services that are disabled by default.
     #############################################################################
 
     # - apps/chat-gpt-next-web.yaml # ChatGPT Next Web
