@@ -16,7 +16,7 @@ services:
 
 configs:
   corefile:
-    content: | # yaml
+    content: |
       .:53 {
           # 1. Logging for troubleshooting
           log

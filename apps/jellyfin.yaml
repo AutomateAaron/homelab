@@ -29,7 +29,7 @@ services:
 
 configs:
   jellyfin_sso_auth:
-    content: | # language=xml
+    content: | # xml
       <?xml version="1.0" encoding="utf-8"?>
       <PluginConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <SamlConfigs />
@@ -93,7 +93,7 @@ configs:
       </PluginConfiguration>
 
   jellyfin_branding:
-    content: | # language=xml
+    content: | # xml
       <?xml version="1.0" encoding="utf-8"?>
       <BrandingOptions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
         <LoginDisclaimer>

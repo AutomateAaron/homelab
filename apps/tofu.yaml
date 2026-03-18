@@ -1,0 +1,123 @@
+# Helpful for debugging:
+# > docker compose run --rm --entrypoint sh tofu
+
+services:
+  tofu:
+    container_name: tofu
+    build:
+      # Multi stage docker file as per https://opentofu.org/docs/intro/install/docker/
+      dockerfile_inline: |
+        FROM ghcr.io/opentofu/opentofu:minimal AS tofu
+        FROM alpine:latest
+        COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
+        WORKDIR /tofu
+        ENTRYPOINT ["sh", "-c", "tofu init && tofu apply -auto-approve"]
+    volumes:
+      - ${CONFIGS_DIR}/tofu:/tofu
+    configs:
+      - source: main_tf
+        target: /tofu/main.tf
+    restart: on-failure
+    networks:
+      - proxy
+    depends_on:
+      - radarr
+      - sonarr
+      - prowlarr
+      - flaresolverr
+
+configs:
+  main_tf:
+    content: | # hcl
+      # Providers
+      terraform {
+        required_providers {
+          radarr = {
+            source  = "devopsarr/radarr"
+            version = "~> 2.0"
+          }
+          sonarr = {
+            source  = "devopsarr/sonarr"
+            version = "~> 3.0"
+          }
+          prowlarr = {
+            source  = "devopsarr/prowlarr"
+            version = "~> 3.0"
+          }
+        }
+      }
+
+      provider "radarr" {
+        url     = "http://gluetun:7878"
+        api_key = "${RADARR_APIKEY}" # Using docker compose string substitution
+      }
+
+      provider "sonarr" {
+        url     = "http://gluetun:8989"
+        api_key = "${SONARR_APIKEY}" # Using docker compose string substitution
+      }
+
+      provider "prowlarr" {
+        url     = "http://gluetun:9696"
+        api_key = "${PROWLARR_APIKEY}" # Using docker compose string substitution
+      }
+
+      # --- Download Clients ---
+      resource "radarr_download_client_qbittorrent" "main" {
+        enable   = true
+        priority = 1
+        name     = "qBittorrent (Managed by OpenTofu)"
+        host     = "localhost"
+        port     = 8080
+        username = "admin"
+        password = "${QBITTORRENT_PASSWORD}" # Using docker compose string substitution
+        movie_category = "radarr"
+
+      }
+
+      resource "sonarr_download_client_qbittorrent" "main" {
+        enable      = true
+        priority    = 1
+        name        = "qBittorrent (Managed by OpenTofu)"
+        host        = "localhost"
+        port        = 8080
+        username    = "admin"
+        password    = "${QBITTORRENT_PASSWORD}" # Using docker compose string substitution
+        tv_category = "sonarr"
+      }
+
+      # --- Prowlarr Tags ---
+      resource "prowlarr_tag" "flaresolverr" {
+        label = "flaresolverr"
+      }
+
+      # --- Prowlarr Indexer Proxies ---
+      resource "prowlarr_indexer_proxy_flaresolverr" "main" {
+        name            = "FlareSolverr (Managed by OpenTofu)"
+        host            = "http://localhost:8191"
+        request_timeout = 60
+        tags            = [prowlarr_tag.flaresolverr.id]
+      }
+
+      # --- Prowlarr App Connections ---
+      resource "prowlarr_application_radarr" "main" {
+        name         = "Radarr (Managed by OpenTofu)"
+        sync_level   = "fullSync"
+        prowlarr_url = "http://localhost:9696"
+        base_url     = "http://localhost:7878"
+        api_key      = "${RADARR_APIKEY}" # Using docker compose string substitution
+        sync_categories = [2000, 2010, 2020, 2030, 2040, 2045, 2050, 2060, 2070, 2080]
+      }
+
+      resource "prowlarr_application_sonarr" "main" {
+        name         = "Sonarr (Managed by OpenTofu)"
+        sync_level   = "fullSync"
+        prowlarr_url = "http://localhost:9696"
+        base_url     = "http://localhost:8989"
+        api_key      = "${SONARR_APIKEY}" # Using docker compose string substitution
+        sync_categories       = [5000, 5010, 5020, 5030, 5040, 5045, 5050]
+        anime_sync_categories = [5070]
+      }
+
+
+

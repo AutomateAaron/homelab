@@ -27,6 +27,7 @@ include:
     - apps/radarr.yaml # Radarr (Movie Downloads)
     - apps/sonarr.yaml # Sonarr (TV Show Downloads)
     - apps/bazarr.yaml # Subtitle (Subtitle Downloads)
+    - apps/tofu.yaml # OpenTofu (Arr Configuration Management)
     # - apps/jellyseerr.yaml # Jellyseerr (Media Requests)
 
 

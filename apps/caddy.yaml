@@ -42,7 +42,7 @@ services:
 
 configs:
   caddyfile:
-    content: | # yaml
+    content: |
       (authelia) {
               forward_auth http://authelia:9091 {
                       copy_headers Remote-User Remote-Groups Remote-Name Remote-Email
