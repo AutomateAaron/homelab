@@ -8,6 +8,7 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
+      PROWLARR__AUTH__APIKEY: ${PROWLARR_APIKEY}
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
