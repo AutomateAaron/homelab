@@ -12,6 +12,7 @@ services:
         COPY --from=tofu /usr/local/bin/tofu /usr/local/bin/tofu
         WORKDIR /tofu
         ENTRYPOINT ["sh", "-c", "tofu init && tofu apply -auto-approve"]
+    user: "${PUID}:${PGID}"
     volumes:
       - ${CONFIGS_DIR}/tofu:/tofu
     configs:
