@@ -24,6 +24,7 @@ include:
     - apps/media/radarr.yaml # Radarr (Movie Downloads)
     - apps/media/sonarr.yaml # Sonarr (TV Show Downloads)
     - apps/media/bazarr.yaml # Subtitle (Subtitle Downloads)
+    - apps/media/recyclarr.yaml # Recyclarr (Automatically synchronize TRaSH Guides)
     - apps/media/tofu.yaml # OpenTofu (Arr Configuration Management)
 
     #############################################################################

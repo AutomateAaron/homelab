@@ -18,7 +18,7 @@ services:
     configs:
       - source: main_tf
         target: /tofu/main.tf
-    restart: on-failure
+    restart: on-failure # Retry until services start
     networks:
       - proxy
     depends_on:

@@ -1,0 +1,99 @@
+services:
+  recyclarr:
+    container_name: recyclarr
+    image: ghcr.io/recyclarr/recyclarr:8
+    command: ["sync"]
+    user: ${PUID}:${PGID}
+    environment:
+      - TZ=${TZ}
+    configs:
+      - source: recyclarr_yml
+        target: /config/recyclarr.yml
+    volumes:
+      - ${CONFIGS_DIR}/recyclarr:/config
+    security_opt:
+      - no-new-privileges:true
+    restart: on-failure # Retry until services start
+    # Run through VPN
+    network_mode: service:gluetun
+    depends_on:
+      - gluetun
+      - radarr
+      - sonarr
+
+
+configs:
+  recyclarr_yml:
+    content: | # yaml
+  
+      # yaml-language-server: $$schema=https://schemas.recyclarr.dev/latest/config-schema.json
+
+      # Configuration specific to Sonarr. For Radarr, the layout is the same.
+      # See: https://recyclarr.dev/reference/configuration/basic/
+      sonarr:
+        series:
+          # Set the URL/API Key to your actual instance
+          base_url: http://localhost:8989
+          api_key: ${SONARR_APIKEY}
+          delete_old_custom_formats: true
+
+          # See: https://recyclarr.dev/reference/configuration/quality-definition/
+          quality_definition:
+            type: series
+
+          # See: https://recyclarr.dev/reference/configuration/quality-profiles/
+          quality_profiles:
+            - trash_id: 9d142234e45d6143785ac55f5a9e8dc9  # WEB-1080p (Alternative)
+              name: "WEB-1080p (Recyclarr)"
+              reset_unmatched_scores:
+                enabled: true
+            - trash_id: dfa5eaae7894077ad6449169b6eb03e0  # WEB-2160p (Alternative)
+              name: "WEB-2160p (Recyclarr)"
+              reset_unmatched_scores:
+                enabled: true
+
+
+          # See: https://recyclarr.dev/reference/configuration/custom-formats/
+          custom_formats:
+
+          # See: https://recyclarr.dev/reference/configuration/media-naming/
+          media_naming:
+            series: default
+            season: default
+            episodes:
+              rename: true
+              standard: default
+              daily: default
+              anime: default
+
+      radarr:
+        movie:
+          # Set the URL/API Key to your actual instance
+          base_url: http://localhost:7878
+          api_key: ${RADARR_APIKEY}
+          delete_old_custom_formats: true
+
+          # See: https://recyclarr.dev/reference/configuration/quality-definition/
+          quality_definition:
+            type: movie
+
+          # See: https://recyclarr.dev/reference/configuration/quality-profiles/
+          quality_profiles:
+            - trash_id: d1d67249d3890e49bc12e275d989a7e9  # HD Bluray + WEB
+              name: "HD Bluray + WEB (Recyclarr)"
+              reset_unmatched_scores:
+                enabled: true
+            - trash_id: 64fb5f9858489bdac2af690e27c8f42f  # UHD Bluray + WEB
+              name: "UHD Bluray + WEB (Recyclarr)"
+              reset_unmatched_scores:
+                enabled: true
+
+          # See: https://recyclarr.dev/reference/configuration/custom-formats/
+          custom_formats:
+
+          # See: https://recyclarr.dev/reference/configuration/media-naming/
+          media_naming:
+            folder: default
+            movie:
+              rename: true
+              standard: standard
