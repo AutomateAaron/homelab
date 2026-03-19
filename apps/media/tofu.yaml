@@ -30,7 +30,7 @@ services:
 configs:
   main_tf:
     content: | # hcl
-      # Providers
+      # Versions
       terraform {
         required_providers {
           radarr = {
@@ -48,6 +48,7 @@ configs:
         }
       }
 
+      # Providers
       provider "radarr" {
         url     = "http://gluetun:7878"
         api_key = "${RADARR_APIKEY}" # Using docker compose string substitution
@@ -126,4 +127,20 @@ configs:
         api_key      = "${SONARR_APIKEY}" # Using docker compose string substitution
         sync_categories       = [5000, 5010, 5020, 5030, 5040, 5045, 5050]
         anime_sync_categories = [5070]
+      }
+
+      # --- Prowlarr Sync Profile ---
+      # TODO: This is perhaps a bit brittle & fails if the Standard profile doesn't
+      # exist already.
+      import {
+        to = prowlarr_sync_profile.standard
+        id = 1
+      }
+
+      resource "prowlarr_sync_profile" "standard" {
+        name                      = "Standard (Managed by OpenTofu)"
+        minimum_seeders           = 10
+        enable_rss                = true
+        enable_automatic_search   = true
+        enable_interactive_search = true
       }
