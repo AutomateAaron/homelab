@@ -12,6 +12,12 @@ services:
       TZ: ${TZ}
       SONARR__AUTH__APIKEY: ${SONARR_APIKEY}
       SONARR__AUTH__METHOD: External
+    healthcheck:
+      test: ["CMD", "curl", "-f", http://localhost:8989/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}

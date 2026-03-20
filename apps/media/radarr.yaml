@@ -12,6 +12,12 @@ services:
       TZ: ${TZ}
       RADARR__AUTH__APIKEY: ${RADARR_APIKEY}
       RADARR__AUTH__METHOD: External
+    healthcheck:
+      test: ["CMD", "curl", "-f", http://localhost:7878/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     security_opt:
       - no-new-privileges:true
     restart: ${UNIVERSAL_RESTART_POLICY:-unless-stopped}
