@@ -16,8 +16,10 @@ include:
     #############################################################################
     # MEDIA
     #############################################################################
-    - apps/media/gluetun.yaml # Gluetun (VPN Client)
+
     - apps/media/jellyfin.yaml # Jellyfin (Media Server)
+
+    - apps/media/gluetun.yaml # Gluetun (VPN Client)
     - apps/media/qbittorrent.yaml # qBittorrent (Torrent Client)
     - apps/media/flaresolverr.yaml # FlareSolverr (DDoS-GUARD Bypasser)
     - apps/media/prowlarr.yaml # Prowlarr (Indexer)

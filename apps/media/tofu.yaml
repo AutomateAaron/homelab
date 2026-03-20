@@ -139,7 +139,7 @@ configs:
 
       resource "prowlarr_sync_profile" "standard" {
         name                      = "Standard (Managed by OpenTofu)"
-        minimum_seeders           = 10
+        minimum_seeders           = 5
         enable_rss                = true
         enable_automatic_search   = true
         enable_interactive_search = true
